@@ -1,0 +1,87 @@
+{
+  "B": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3,
+    "pair": "b"
+  },
+  "b": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3,
+    "pair": "B"
+  },
+  "^": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "W": {
+    "id": "surge-wall-large",
+    "width": 2,
+    "height": 2
+  },
+  "#": {
+    "id": "surge-wall",
+    "width": 1,
+    "height": 1
+  },
+  ">": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "O": {
+    "id": "router",
+    "width": 1,
+    "height": 1
+  },
+  "v": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "<": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "A": {
+    "id": "arc",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "J": {
+    "id": "scorch",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "Y": {
+    "id": "solar-panel",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "N": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "*": {
+    "id": "multi-tile-continuation",
+    "description": "Marque les tuiles continuees d'un bloc occupant plus d'une case. Ne peut JAMAIS etre identifiant d'un bloc."
+  },
+  ".": {
+    "id": "empty",
+    "description": "Case vide"
+  }
+}

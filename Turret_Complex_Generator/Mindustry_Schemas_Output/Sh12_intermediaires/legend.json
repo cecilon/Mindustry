@@ -1,0 +1,124 @@
+{
+  "A": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "B": {
+    "id": "thorium-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "C": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "D": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "E": {
+    "id": "underflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "F": {
+    "id": "underflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "G": {
+    "id": "underflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "H": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "I": {
+    "id": "mend-projector",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "J": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "K": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "L": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "M": {
+    "id": "water-extractor",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "N": {
+    "id": "mechanical-pump",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "O": {
+    "id": "conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "P": {
+    "id": "foreshadow",
+    "width": 4,
+    "height": 4,
+    "rotation": 0
+  },
+  "Q": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "R": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0,
+    "pair": "T"
+  },
+  "S": {
+    "id": "conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "T": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "pair": "R"
+  }
+}

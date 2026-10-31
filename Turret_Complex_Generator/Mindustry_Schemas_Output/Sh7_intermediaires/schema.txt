@@ -1,0 +1,35 @@
+C*   BBBBBBBBBBBBB    BBBBB   BBB  
+**                              B  
+C*                              B  
+**B                             B  
+C*B                           A**  
+**B                           ***  
+C*B                           ***  
+**B                             B  
+C*B                             B  
+**B                           A**  
+C*B                           ***  
+**B                           ***  
+C*B                             B  
+**B                                
+C*B                            C*  
+**B                            **  
+C*B                            C*  
+**B                            **  
+C*B                                
+**B                             B  
+C*B                             B  
+**B                             B  
+C*B                             B  
+**B                             B  
+C*B                             B  
+**B                             B  
+C*B                             B  
+**B                             B  
+C*B                             B  
+**B                             B  
+C*B                             B  
+**B                             B  
+C*BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB  
+**C*C*C*C*C*C*C*C*C*C*C*C*C*C*C*C* 
+  ******************************** 

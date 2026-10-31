@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDEEEEEEEEEEEEEEEEEEEEEEEEEEFGHA*
+**I J**K**L**MML**L**N*O*K**J** P**
+A*I *********N***************** PA*
+**I *****************MMMM****** P**
+A*IQRSSSSSSSSSSSSSSSSSSSSSSSSSSTPA*
+**IUL**L**L**L**L**L**L**L**L**VP**
+A*IU***************************VPA*
+**IW***************************XP**
+A*IDEEEEEEEEEEEEEEEEEEEEEEEEEEFGHA*
+**IWO*Y***Y***O*MMML**Y***Y***MXP**
+A*IU************Z*************MVPA*
+**IUa*********a***************MVP**
+A*IU***************MMM********MVPA*
+**IQRSSSSSSSSSSSSSSSSSSSSSSSSSSTP**
+A*IUa*a*a*a*a*a*a*a*a*a*a*a*a*MVPA*
+**IU**************************MVP**
+A*IUa*a*a*a*a*a*a*a*a*a*a*a*Ma*VPA*
+**IW************************b**XP**
+A*IDEEEEEEEEEEEEEEEEEEEEEEEEEEcGHA*
+**IWa*a*a*a*a*a*a*a*a*a*a*a*a*dXP**
+A*IU**************************MVPA*
+**IQRSSSSSSSSSSSSSSSSSSSSSSSSSSTP**
+A*IUa*a*a*a*a*a*a*a*a*a*a*a*a*MVPA*
+**IW**************************dXP**
+A*IDEEEEEEEEEEEEEEEEEEEEEEEEEEcGHA*
+**IWbbbbbbbe***e***e***a*bbbbbbXP**
+A*IUJ**K**M**************K**J**VPA*
+**IU******M************a*******VP**
+A*IU******M********************VPA*
+**CfggggggggggggggggggggggggggfXP**
+A*hiiiiiiiiiiiiiiiiiiiiiiiiiiiihjA*
+**A*A*A*A*A*A*A*A*A*A*A*A*A*A*BBB**
+BB****************************BXjBB

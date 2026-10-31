@@ -1,0 +1,9 @@
+{
+  "score_global": 1080.0,
+  "dps_par_taille": 120.0,
+  "dps_par_cout": 1.9636363636363636,
+  "tourelles": [
+    "fuse",
+    "fuse"
+  ]
+}

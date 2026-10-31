@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDEFFEFFEFFEFFEFFEFFEFFEFFEDDEGA*
+**C H**I J*H**H**H**H**IJ*H**K* L**
+A*C ***  ************** ******* LA*
+**C ***    ************   ***   L**
+A*CMNNOPPOPPOPPOPPOPPOPPOPPONNOQLA*
+**CRH**H**H**H**H**H**H**H**H**SL**
+A*CR***************************SLA*
+**CT***************************UL**
+A*CDDEFFEFFEFFEFFEFFEFFEFFEFFEDEGA*
+**CTH**H**H**H**H**H**H**H**H**UL**
+A*CR***************************SLA*
+**CR***************************SL**
+A*CMOPPOPPOPPOPPOPPOPPOPPOPPONNQLA*
+**CRV**V**V**V**V**V**V**V**V**SL**
+A*CR***************************SLA*
+**CT***************************UL**
+A*CDDDEFFEFFEDDWFFEFFEFFEFFEFFEEGA*
+**CTV**V**V**XY*V**V**V**V**V**UL**
+A*CR*********I*****************SLA*
+**CR*********   ***************SL**
+A*CMNOPPOPPOPPOPPOPPZPPOPPOPPONQLA*
+**CRV**V**V**V** ISa*IV**V**V**SL**
+A*CR************   ** *********SLA*
+**CT************      *********UL**
+A*CDEFFEFFEFFEFFEFFEFFEFFEFFEDDEGA*
+**CTbbZbbZbbZbbZbbZbbZbbZbbZbUZUL**
+A*CIc***c***c***c***c***c*** I  LA*
+**C ************************d** L**
+A*C *************************** LA*
+**C *************************** L**
+B eeeeWeeWeeWeeWeeWeeWeeWeeWeeWfL B
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*    A*B
+****************************BUBf**B

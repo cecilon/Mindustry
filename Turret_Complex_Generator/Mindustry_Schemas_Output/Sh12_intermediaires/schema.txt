@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDEDEDEDDDEDEDEDEDEDEDDDEDEDEDFA*
+**GH**H**I*H**H**H**H**JI*H**K*JL**
+A*G********************J*******JLA*
+**G******JJ************JJJ***JM*L**
+A*GH**H**H**H**H**H**H**H**H****LA*
+**G***************************K*F**
+A*G*****************************FA*
+**CEDEDEDEDEDEDEDEDEDEDEDEDEDEDEF**
+A*GK*K*K*K*K*K*K*K*K*K*K*K*K*K*JLA*
+**G****************************JL**
+A*CNOONOONOONOONOONOONOONOONOONOLA*
+**GH**H**H**H**H**H**H**H**H**JJL**
+A*G***************************K*FA*
+**G*****************************F**
+A*CDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFA*
+**GP***P***P***P***P***P***P***JL**
+A*G****************************JLA*
+**G****************************JL**
+A*G****************************JLA*
+**GK*K*K*K*K*K*K*K*K*K*K*K*K*K*JL**
+A*G****************************JLA*
+**CEDEDEDEDEDEDEDEDEDEDEDEDEDEDDF**
+A*GP***P***P***P***P***P***P***JLA*
+**G****************************JL**
+A*G****************************JLA*
+**G****************************JL**
+A*GK*K*K*K*K*K*K*K*K*K*K*K*K*K*JLA*
+**G****************************JL**
+A*CDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFA*
+**CNOONOONOONOONOONOONOONOONOONOL**
+B QQQQQQQQQQQQQQQQQQQQQQQQQQQQQRL B
+A*A*S A*A*A*A*A*A*A*A*A*A*A*A*  A*B
+****SB************************BT**B

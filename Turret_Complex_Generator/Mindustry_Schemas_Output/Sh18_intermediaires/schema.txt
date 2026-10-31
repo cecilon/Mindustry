@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDA*
+**C  E**F**GHIJK**K**HGF**E**   H**
+A*L  ******MHN*******HM******   HA*
+**L  ******IJ********JJ******   H**
+A*L OPPPPPPPPPPPPPPPPPPPPPPPPQ  HA*
+**L RS*K**S*K**K**K**K**K**T*U  H**
+A*L R************************U  HA*
+**L RJI***I ***************IJU  H**
+A*CDRDDDDDDDDDDDDDDDDDDDDDDDDUDVWA*
+**C RS*X***X***Y*I X***X***S*U  H**
+A*L R************  **********U  HA*
+**L RZ*********IS*I********Z*U  H**
+A*L R********** ** **********U  HA*
+**L OPPPPPPPPPPPPPPPPPPPPPPPPQ  H**
+A*L RZ*Z*S*Z*Z*a** Z*Z*S*Z*Z*U  HA*
+**L R************* **********U  H**
+A*L Rb*Ib*b*b* ***b*S*Ib*b*b*U  HA*
+**L R** ******    **** ******U  H**
+A*CDRDDDDDDDDDDDDDDDDDDDDDDDDUDVWA*
+**C Rb*S*b*b*b*b*b*b*S*b*b*b*U  H**
+A*L R************************U  HA*
+**L OPPPPPPPPPPPPPPPPPPPPPPPPQ  H**
+A*L Rc**c**c**S*c**c**c**c**IU  HA*
+**L R***********************JU  H**
+A*C R*********  ************JU  HA*
+**CDRDDDDDDDDDDDDDDDDDDDDDDDDUDdW**
+A*C RE**F**GHc**c**  HGF**E**U  HA*
+**L R******MH******  HM******U  H**
+A*L R******  ******    ******U  HA*
+**C effffffffffffffffffffffffQg H**
+A*hiiiiiiiiiiiiiiiiiiiiiiiiiiiihjA*
+**A*A*A*A*A*A*A*A*A*A*A*A*A*A*BBB**
+BB****************************gBjBB

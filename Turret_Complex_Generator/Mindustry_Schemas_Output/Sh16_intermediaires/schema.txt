@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDDEEEEEEEEEEEEEEEEEEEEEEEEEFEEA*
+**G H**I**JKLLLM**M**N*KI**H**  O**
+A*G ******PLLN*********L******  OA*
+**G ******LLL********LLK******  O**
+A*GQRRRRRRRRRRRRRRRRRRRRRRRRRRS OA*
+**GTU*U*U*M**M**U*M**M**M**M**V O**
+A*GT**************************V OA*
+**GWLK K  ******  ************X O**
+A*GDEEEEEEEEEEEEEEEEEEEEEEEEEEFDYA*
+**GWU*Z***Z***a*   Ka*Z***Z***X O**
+A*GT************b** **********V OA*
+**GTU*********c****K K********V O**
+A*GT***************   ********V OA*
+**GQRRRRRRRRRRRRRRRRRRRRRRRRRRS O**
+A*GTd*U*d*d*d*d*U*d*d*d*d*U*d*V OA*
+**GT**************************V O**
+A*GTe*KU*KU*U*U*U*U*U*U* KU*e*V OA*
+**GW** ** **************  ****X O**
+A*GDEEEEEEEEEEEEEEEEEEEEEEEEEEFDYA*
+**GWe*U*e*e*e*e*U*e*e*e*e*U*e*X O**
+A*GT**************************V OA*
+**GQRRRRRRRRRRRRRRRRRRRRRRRRRRS O**
+A*GTe*e*e*U*e*e*e*e*U*e*e*e*e*V OA*
+**GW**************************X O**
+A*GDEEEEEEEEEEEEEEEEEEEEEEEEEEFDYA*
+**GW      e*e*f***f***e*      X O**
+A*GTH**I****************I**H**V OA*
+**GT******g   ********  ******V O**
+A*GT******h   ********  ******V OA*
+**CijjjjjjjjjjjjjjjjjjjjjjjjkkSXO**
+A*lmmmmmmmmmmmmmmmmmmmmmmmmmmmmlnA*
+**A*A*A*A*A*A*A*A*A*A*A*A*A*A*BBB**
+BB****************************BXnBB

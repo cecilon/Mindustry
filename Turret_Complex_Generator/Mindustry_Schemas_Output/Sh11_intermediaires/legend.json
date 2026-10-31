@@ -1,0 +1,103 @@
+{
+  "A": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "B": {
+    "id": "thorium-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "C": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "D": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "E": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 2,
+    "config": "thorium"
+  },
+  "F": {
+    "id": "underflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "G": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "H": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "I": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "J": {
+    "id": "foreshadow",
+    "width": 4,
+    "height": 4,
+    "rotation": 0
+  },
+  "K": {
+    "id": "hail",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "L": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 2,
+    "config": "silicon"
+  },
+  "M": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "N": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 0,
+    "config": "silicon"
+  },
+  "O": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0,
+    "pair": "P"
+  },
+  "P": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "pair": "O"
+  }
+}

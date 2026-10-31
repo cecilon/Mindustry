@@ -1,0 +1,146 @@
+{
+  "A": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "B": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "C": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "D": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "E": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "F": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "G": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "H": {
+    "id": "hail",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "I": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "J": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "K": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "L": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "M": {
+    "id": "wave",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "N": {
+    "id": "wave",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "O": {
+    "id": "wave",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "P": {
+    "id": "wave",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "Q": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "R": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "S": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "T": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "U": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "V": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "W": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "X": {
+    "id": "thorium-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  }
+}

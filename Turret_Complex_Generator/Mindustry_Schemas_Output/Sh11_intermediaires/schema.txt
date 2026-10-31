@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFA*
+**CG**G**G**G**G**G**G**G**G**H*I**
+A*C*****************************IA*
+**C***************************H*I**
+A*CG**G**G**G**G**G**G**G**G****IA*
+**C***************************H*I**
+A*C*****************************IA*
+**CEDEDEDEDEDEDEDEDEDEDEDEDEDEDEF**
+A*CG**G**G**G**G**G**G**G**G**H*IA*
+**C*****************************I**
+A*C***************************H*IA*
+**CG**G**G**G**G**G**G**G**G****I**
+A*C***************************H*IA*
+**C*****************************I**
+A*CDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFA*
+**CJ***J***J***J***J***J***J***KI**
+A*C****************************KIA*
+**C****************************KI**
+A*C****************************KIA*
+**CH*H*H*H*H*H*H*H*H*H*H*H*H*H*KI**
+A*C****************************KIA*
+**CEDEDEDEDEDEDEDEDEDEDEDEDEDEDLF**
+A*CJ***J***J***J***J***J***J***KIA*
+**C****************************KI**
+A*C****************************KIA*
+**C****************************KI**
+A*CH*H*H*H*H*H*H*H*H*H*H*H*H*H*KIA*
+**C****************************KI**
+A*CDEDEDEDEDEDEDEDEDEDEDEDEDEDEDFA*
+**CKKKKKKKKKKKKKKKKKKKKKKKKKKKKKI**
+B MMNMNMNMNMNMNMNMNMNMNMNMNMNMNOI B
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*  A*B
+******************************BP**B

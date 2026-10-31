@@ -1,0 +1,38 @@
+{
+  "A": {
+    "id": "scorch",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "B": {
+    "id": "combustion-generator",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "C": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "D": {
+    "id": "battery",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "E": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "F": {
+    "id": "copper-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  }
+}

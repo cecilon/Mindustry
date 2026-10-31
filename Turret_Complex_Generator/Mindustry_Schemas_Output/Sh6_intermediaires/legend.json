@@ -1,0 +1,44 @@
+{
+  "A": {
+    "id": "scorch",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "B": {
+    "id": "ripple",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "C": {
+    "id": "combustion-generator",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "D": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "E": {
+    "id": "battery",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "F": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "G": {
+    "id": "titanium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  }
+}

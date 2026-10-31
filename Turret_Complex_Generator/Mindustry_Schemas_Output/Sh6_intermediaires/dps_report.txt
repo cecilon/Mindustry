@@ -1,0 +1,26 @@
+{
+  "score_global": 3154.0,
+  "dps_par_taille": 2919.333333333333,
+  "dps_par_cout": 62.254579093431985,
+  "tourelles": [
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "scorch",
+    "ripple",
+    "ripple"
+  ]
+}

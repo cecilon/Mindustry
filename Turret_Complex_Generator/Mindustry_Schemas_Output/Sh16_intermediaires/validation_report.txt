@@ -1,0 +1,6 @@
+{
+  "nb_tourelles": 87,
+  "nb_tourelles_anti_air": 23,
+  "nb_infra": 460,
+  "surface_blocs": 1154
+}

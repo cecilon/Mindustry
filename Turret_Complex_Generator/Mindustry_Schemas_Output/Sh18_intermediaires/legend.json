@@ -1,0 +1,221 @@
+{
+  "A": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "B": {
+    "id": "thorium-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "C": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "D": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "E": {
+    "id": "liquid-tank",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "F": {
+    "id": "vault",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "G": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "config": "thorium"
+  },
+  "H": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "I": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "J": {
+    "id": "arc",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "K": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "L": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "M": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "config": "titanium"
+  },
+  "N": {
+    "id": "mend-projector",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "O": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "P": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "Q": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "R": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "S": {
+    "id": "parallax",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "T": {
+    "id": "wave",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "U": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "V": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 2,
+    "config": "thorium"
+  },
+  "W": {
+    "id": "underflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "X": {
+    "id": "meltdown",
+    "width": 4,
+    "height": 4,
+    "rotation": 0
+  },
+  "Y": {
+    "id": "overdrive-projector",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "Z": {
+    "id": "lancer",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "a": {
+    "id": "force-projector",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "b": {
+    "id": "swarmer",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "c": {
+    "id": "cyclone",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "d": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "e": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "f": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "g": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "h": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "i": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "j": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  }
+}

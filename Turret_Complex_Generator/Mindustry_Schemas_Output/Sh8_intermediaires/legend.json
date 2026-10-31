@@ -1,0 +1,68 @@
+{
+  "A": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "B": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "C": {
+    "id": "hail",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "D": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "E": {
+    "id": "wave",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "F": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "G": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "H": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "I": {
+    "id": "conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "J": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "K": {
+    "id": "thorium-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "nb_tourelles": 56,
+  "nb_infra": 438,
+  "surface_blocs": 1177
+}

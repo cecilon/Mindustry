@@ -1,0 +1,20 @@
+{
+  "A": {
+    "id": "fuse",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "B": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "C": {
+    "id": "thorium-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  }
+}
