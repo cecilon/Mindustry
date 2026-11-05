@@ -1,0 +1,100 @@
+# 🧠 Gemini_Intelligence_Mindustry.md — Référentiel Consolidé & Invariants (v10.0 Stable)
+
+
+Current Versions
+____________________________________________________________________________________________________________________________________________________________________________________
+____________________________________________________________________________________________________________________________________________________________________________________
+____________________________________________________________________________________________________________________________________________________________________________________
+
+🧠 Architecture du Cerveau (v11.5 Universal)
+
+• 
+Fichier : mindustry_brain.json (sauvegarde atomique sur Ctrl+C).
+• 
+Entraînement : Curriculum Learning 50/50 (Exploitation de la cible / Exploration universelle de 16x16 à 48x46).
+• 
+Stratégie de Munitions : Priorité au Graphite sur les cartes profondes pour activer l'artillerie (Ripple/Spectre) là où le Thorium/Surge échouent par manque de portée.
+
+📜 Historique des Choix Critiques
+
+• 
+Abandon de la v9.6 : Trop de batteries inutiles et de zones mortes.
+• 
+Choix v11.5 : Passage au pilotage par "Génome" (profil de travées, paires de munitions, mode de pavage) pour éviter les minimums locaux des règles fixes.
+• 
+Orchestration : Gen_Turret_Complex.py gère désormais le pipeline complet de l'entraînement jusqu'à la compilation du .msch.
+
+
+
+Le Code d'Honneur (Axiomes Inviolables)
+
+Ce document définit les lois physiques fondamentales auxquelles tout complexe doit se conformer. Un schéma ne respectant pas ces 7 points est considéré comme invalide.
+1. 
+Axiome 1 - Portée Cible Utile : 100% des tourelles doivent pouvoir atteindre la ligne y = -8 (centre_y + 8 <= portée). Toute tourelle hors de portée est remplacée par une structure offensive plus adaptée.
+2. 
+Axiome 2 - Alimentation Réelle : Tout bloc doit être en contact physique avec son couloir de ressources (Munition/Liquide) ou dans le rayon laser d'un réseau électrique connexe.
+3. 
+Axiome 3 - Intégrité des Ponts : Les sauts de pont doivent fonctionner par paires exactes. Zéro croisement entre les réseaux de munitions et de liquides.
+4. 
+Axiome 4 - Quotas de Composition : Anti-Air ≥ 15%. Parallax entre 1% et 10%. Foreshadow entre 1% et 5%.
+5. 
+Axiome 5 - Survie et Autonomie : Enceinte de murs étanche. Soin couvrant 100% de la surface. Boucliers protégeant ≥ 85% des tourelles. Autonomie batterie 4.0s - 5.0s à l'arrière.
+6. 
+Axiome 6 - Pavage Bipartite (Anti-batterie) : Dans les travées de 4 cases entre Munitions et Liquide, les tourelles à munitions sont groupées côté Munitions, les électriques/liquides côté Liquide. Interdiction d'utiliser des batteries comme "bouche-trou" si une tourelle 1x1 est possible.
+7. 
+Axiome 7 - Fluidité Perpétuelle : Zéro congestion. Multiplexage 50/50 aux confluences. Soupape d'échappement via overflow-gate et pont rot=3 au dernier bloc de la boucle interne.
+
+Équation de Convergence (Fitness)
+
+Le réseau de neurones cherche à maximiser le score suivant :
+Fitness = (DPS_effectif_soutenu * Facteur_Approvisionnement) - (Pénalité_Surface_Inutile)
+
+
+
+Previous Versions
+____________________________________________________________________________________________________________________________________________________________________________________
+____________________________________________________________________________________________________________________________________________________________________________________
+____________________________________________________________________________________________________________________________________________________________________________________
+
+
+Ce document résume l'algorithme complet et fusionne tous les correctifs en **25 Invariants Absolus (`[INV-01]` à `[INV-25]`)** garantissant **zéro bug et zéro régression** sur tout input (`5x5` à `100x100`).
+
+---
+
+## 1. Résumé de l'Algorithme en 6 Étapes
+1. **Chargement & Physique Mindustry v7 (`Phase 0 & 1`)** : Normalise les alias (`plastinum` → `plastanium`), applique les vraies dimensions (`4x4`, `3x3`, `2x2`, `1x1`), les vraies portées (`range / 8`), les portées boostées au Tissu Phasé (`range_phase_boost`), les vraies munitions (`cyclone` sans `thorium`, `ripple`/`swarmer` avec `plastanium`, `foreshadow` avec `surge-alloy`), et identifie l'Anti-Air pur (`targets_air and not targets_ground` : `scatter`, `parallax`).
+2. **Ciblage à `y = -8` & Couloirs Entrelacés (`Phase 2`)** : Fixe la ligne cible à `y_cible_min = -8`. Calcule la couronne de murs (`0`, `1` ou `2` d'épaisseur) et entrelace les couloirs de Munitions et de Liquides (travées de `3` cases en haut et en bas pour les `3x3` et coffres, travées de `4` cases au centre pour les `4x4`).
+3. **Top 2 Munitions, Quota 15 % Anti-Air Pur & Stratification DPS (`Phase 3`)** : Sélectionne au maximum 2 munitions solides couvrant à la fois le fort DPS avant, la longue portée arrière (`ripple` 36.25) et l'Anti-Air pur. Place les tourelles couvrant `y = -8` en maintenant `>= 15 %` d'Anti-Air pur, puis pose les `force-projector` (`>= 85 %` des tourelles, liés au liquide) et les `overdrive-projector` / `overdrive-dome`.
+4. **Stockages Collés, Déchargeurs Aval & Soin Reculé (`Phase 4A`)** : Place les stockages (`1+1` au centre pour `25..70` tourelles, `4+4` aux 4 angles pour `>= 71` et `largeur >= 30`) avec `vault` et `liquid-tank` strictement collés (`tx = vx + w`) et 1 ou 2 `unloader` placés **en aval à gauche (`ux = vx - 1`)** déchargeant dans 2 convoyeurs dédiés. Place (et re-vérifie) les `mend-projector` le plus en arrière possible (`-y`) pour couvrir les murs avant et les 14 premières lignes latérales.
+5. **Comblement Zéro Trou, Batteries 8s & Réseau Électrique Connexe (`Phase 4B`)** : Comble les travées et la bande droite (`x_max - 3 .. x_max - 2`, 100 % électrique) en maintenant les 15 % d'Anti-Air. Place à l'arrière/flancs des `battery-large` (`50 000`) et `battery` (`4 000`) pour assurer `>= 8s` de consommation totale. Relie ensuite **100 % des consommateurs et grappes de batteries** via `power-node-large` (`portée 15`), `power-node` (`portée 6`) et `surge-tower` (`portée 30`) en **1 seule composante connexe** (avec respect de `max_links` et rebouchage immédiat de toute empreinte).
+6. **Double Peigne Logistique, Ponts 100 % Pairs & Murs Étanches (`Phase 4C, 7 & 8`)** : Trace la boucle continue de liquide (`x_max - 4` et `x_min + 2`, zéro pont vertical de saut) et la boucle de munitions (`router` équitable sur `x_max - 1`, `sorter` en `x_max - 2` sauf sur les couloirs de stockage et en `y_min`, sauts horizontaux `rot = 2` par-dessus les colonnes de liquide, réception sur convoyeur normal en `x_min`, paires de ponts bout-à-bout 100 % paires). Ferme 100 % de la couronne de murs en `2x2` puis `1x1`.
+
+---
+
+## 2. Les 25 Invariants Consolidés (Checklist Anti-Régression)
+
+* **[INV-01] Tailles & Coûts Officiels :** `spectre`/`meltdown`/`foreshadow` en `4x4`, `scatter`/`parallax`/`wave` en `2x2` ; `foreshadow` requiert `surge-alloy` + `plastanium` ; `overdrive-projector` requiert `plastanium` (alias `plastinum` accepté).
+* **[INV-02] Portées Exactes (`range / 8`) & Boost Tissu Phasé :** Toujours utiliser les portées réelles Mindustry et `range_phase_boost` pour `mender` (`8.5`), `mend-projector` (`16.25`), `overdrive-projector` (`16.875`) et `force-projector` (`17.7`).
+* **[INV-03] Ligne Cible à `y = -8` :** Toute évaluation de portée cible `y_cible_min = -8`.
+* **[INV-04] Filtre de Portée Strict & Adaptatif :** Aucune tourelle hors de portée de `y = -8` n'est posée sur une ligne `y` tant qu'une tourelle fabricable atteint `y = -8` (bannissant `cyclone` et `meltdown` du fond au profit de `ripple` `36.25` / `spectre` `32.5`). Si aucune tourelle du jeu n'atteint `y = -8` (ex. très grande grille sans `surge-alloy`), tri par `-t.portee` après pose des batteries.
+* **[INV-05] Top 2 Munitions Intelligent :** Maximum 2 munitions solides parmi `--ammo` (hors `"power"` et liquides), couvrant le meilleur DPS avant, l'artillerie longue portée arrière (`plastanium`/`graphite`/`silicon`) et l'Anti-Air pur.
+* **[INV-06] Quota `--anti-air` (15 % par défaut) Pur :** Seules les tourelles avec `targets_air == True` et `targets_ground == False` (`scatter`, `parallax`) comptent comme Anti-Air ; le quota `>= 15 %` est maintenu jusqu'à la fin de la Phase 4.
+* **[INV-07] Soin sur 14 Lignes le Plus en Arrière Possible :** Les `mend-projector` / `mender` couvrent 100 % des murs avant + `y = 0..13` sur les côtés, sont choisis avec `y` maximal (en retrait) et re-vérifiés après la pose des coffres.
+* **[INV-08] Champ de Force (`>= 85 %`) & Accélérants :** `force-projector` (`largeur, hauteur > 20`, `nb > 25`) connectés à un couloir de liquide couvrant `>= 85 %` des tourelles ; `overdrive` (`largeur, hauteur > 14`, `nb > 25`) maximisant le gain de DPS.
+* **[INV-09] Stockages Collés (`1+1` Centre ou `4+4` Angles) :** `25..50` (`container` + `liquid-container` au centre), `51..70` (`vault` + `liquid-tank` au centre), `>= 71` et `largeur >= 30` (`4 vaults` + `4 liquid-tanks` aux 4 angles), toujours collés (`tx = vx + w`) et touchant leurs couloirs respectifs.
+* **[INV-10] Déchargeurs (`unloader`) en Aval :** Les 1 ou 2 `unloader` (configurés sur le Top 2 munitions) sont toujours placés **en aval à gauche du coffre (`ux = vx - 1`, `cx_ret = vx - 2`)**, jamais contre un `liquid-tank`, et déchargent dans 2 `titanium-conveyor` (`storage_io`, `rot = 2`) sur le couloir.
+* **[INV-11] Couloirs de Stockage Bi-Munitions :** Tout couloir qui alimente un `vault`/`container` est toujours actif et n'a **pas** de `sorter` en entrée droite, afin que les 2 munitions entrent dans le coffre.
+* **[INV-12] Distribution Équitable par `router` à Droite :** La colonne montante droite (`x_max - 1`) utilise un `router` à chaque jonction de couloir (jamais une `underflow-gate`), collé à un `sorter` en `x_max - 2` (sur les couloirs mono-munition) à sortie unidirectionnelle (`rot = 2`).
+* **[INV-13] Boucle du Haut Sans Trieur Bloquant :** En `(x_max - 1, y_min)`, aucun `sorter` : un convoyeur `rot = 2` fait tourner tout le surplus à gauche vers la colonne descendante `x_min`.
+* **[INV-14] Colonnes de Liquide Continues & Sauts Horizontaux (`rot = 2`) :** Les colonnes verticales de liquide (`x_max - 4` et `x_min + 2`) n'ont aucun pont vertical de saut ; les couloirs de munitions sautent par-dessus via des paires de ponts horizontaux `(x_max - 3 -> x_max - 5)` et `(x_min + 3 -> x_min + 1)` (`rot = 2`).
+* **[INV-15] Réception Fluide sur la Colonne Gauche (`x_min`) :** La sortie du pont horizontal `(x_min + 1, yc)` déverse dans un `titanium-conveyor` normal `(x_min, yc)` (`rot = 3`), jamais contre le flanc d'une tête de sortie de pont vertical.
+* **[INV-16] Entrées Arrière Sans Collision ni Lien Parasite :** Têtes des 2 ponts d'entrée arrière sanctuarisées dès le début de la Phase 4 : liquide en `x_max - 3` (vers `y_liq_bas`, à droite du `liquid-router` `x_max - 4`) et munitions en `x_max - 2` (vers `y_max - 2`, avec convoyeur `rot = 0` en `y_max - 3` vers `x_max - 1`), laissant le collecteur bas `y_max - 1` rejoindre `(x_max - 1, y_max - 1)` en ligne droite.
+* **[INV-17] Chaînes de Ponts Bout-à-Bout & Parité 100 % Paire :** Aucune `underflow-gate` entre les ponts ; alignement pair de `vx` et densification par paires garantissant un nombre strictement pair de têtes de ponts sur chaque ligne et colonne, pour toute largeur/hauteur paire ou impaire.
+* **[INV-18] Suppression des Couloirs de Munitions Inutiles :** Un couloir intermédiaire bordé uniquement par des tourelles électriques (et sans coffre) n'est pas tracé et son espace est comblé.
+* **[INV-19] Bande Latérale Droite (`x_max - 3 .. x_max - 2`) 100 % Électrique :** Remplie uniquement de tourelles électriques (`lancer`, `parallax`, `arc`), batteries et nœuds d'énergie (zéro tourelle à munition solide isolée), sans jamais chevaucher les lignes de couloirs.
+* **[INV-20] Autonomie Batterie `>= 8 Secondes` :** Pose de `battery-large` (`3x3`, `50 000`) et `battery` (`1x1`, `4 000`) de l'arrière vers l'avant jusqu'à couvrir `>= 8.0 * sum(energy_consume_rate)`.
+* **[INV-21] Couverture Électrique à 100 % Après Comblement :** `_placer_energie_connectee` s'exécute **après** le placement de toutes les tourelles et batteries (utilisant `power-node-large` `portée 15`, `power-node` `portée 6` et `surge-tower` `portée 30` sans dépasser `max_links`), garantissant `0` bloc électrique non alimenté.
+* **[INV-22] Connexité Électrique en 1 Seule Composante & Rebouchage :** Le pontage BFS relie toutes les composantes en `1` seul réseau connexe ; si une tourelle multi-cases est remplacée pour poser un relais, ses cases résiduelles sont immédiatement rebouchées par des batteries ou tourelles `1x1` (zéro trou).
+* **[INV-23] Grappes de Batteries par Contact Direct :** Les batteries adjacentes orthogonalement partagent leur connexion électrique sans saturer les liens laser des `power-node`.
+* **[INV-24] Zéro Trou Vide & Murs 100 % Étanches :** Aucune zone vide dans le complexe ; la couronne de murs est comblée en `2x2` puis `1x1` autour des ponts d'entrée arrière.
+* **[INV-25] Export Complet des Configurations :** `legend.json` et `ascii_to_tiles.py` exportent `config` pour `sorter`, `inverted-sorter` et `unloader`, ainsi que les liaisons exactes `dx, dy` de tous les ponts.

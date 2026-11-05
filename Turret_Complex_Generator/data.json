@@ -1,8 +1,7 @@
 {
   "_meta": {
-    "source": "Mindustry wiki (https://fandom.com), valeurs v7 / build 146+ approximatives, compilees a la main.",
-    "units": "dps = degats/seconde (approx., cible terrestre, par type de munition dans ammo_dps) ; energy_consume / capacity = unites d'energie par seconde ; range en cases ; health en PV ; time en secondes.",
-    "note": "Les champs cost_<ressource> peuvent contenir n'importe quelle ressource (lead, graphite, silicon, ...). 'ammo_dps' est une extension du schema : DPS par ressource de munition ('power' = alimente par energie)."
+    "source": "Mindustry v7 official block stats (1 tile = 8 world units).",
+    "units": "range and range_phase_boost in tiles."
   },
   "turrets_offense": {
     "duo": {
@@ -10,482 +9,359 @@
       "dps": 27,
       "ammo_type": "copper",
       "rate": 3,
-      "range": 5,
-      "ammo_dps": {
-        "copper": 27,
-        "graphite": 36,
-        "silicon": 36
-      },
+      "range": 20.0,
+      "ammo_dps": { "copper": 27, "graphite": 36, "silicon": 36 },
       "cost_copper": 35,
-      "cost_titanium": 0,
-      "cost_thorium": 0,
       "width": 1,
       "height": 1,
       "energy_consume": 0,
-      "craftable_ammo": [
-        "graphite",
-        "silicon"
-      ],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
+    },
+    "scatter": {
+      "name_fr": "Eparpilleur",
+      "dps": 90,
+      "ammo_type": "lead",
+      "rate": 6.6,
+      "range": 22.5,
+      "ammo_dps": { "scrap": 45, "lead": 65, "metaglass": 90 },
+      "cost_copper": 85,
+      "cost_lead": 45,
+      "width": 2,
+      "height": 2,
+      "energy_consume": 0,
+      "targets_air": true,
+      "targets_ground": false,
+      "boosters": ["water", "cryofluid"]
     },
     "scorch": {
       "name_fr": "Brulure",
       "dps": 170,
       "ammo_type": "coal",
       "rate": 10,
-      "range": 7,
-      "ammo_dps": {
-        "coal": 170
-      },
+      "range": 7.5,
+      "ammo_dps": { "coal": 170, "pyratite": 240 },
       "cost_copper": 25,
-      "cost_titanium": 0,
-      "cost_thorium": 0,
       "cost_graphite": 22,
       "width": 1,
       "height": 1,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": false,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "hail": {
       "name_fr": "Grele",
       "dps": 33,
       "ammo_type": "graphite",
       "rate": 1,
-      "range": 14,
-      "ammo_dps": {
-        "graphite": 33,
-        "silicon": 33,
-        "pyratite": 45
-      },
+      "range": 29.375,
+      "ammo_dps": { "graphite": 33, "silicon": 33, "pyratite": 45 },
       "cost_copper": 40,
-      "cost_titanium": 0,
-      "cost_thorium": 0,
       "cost_graphite": 17,
       "width": 1,
       "height": 1,
       "energy_consume": 0,
-      "craftable_ammo": [
-        "graphite",
-        "silicon"
-      ],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": false,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "arc": {
       "name_fr": "Arc",
       "dps": 35,
       "ammo_type": "power",
       "rate": 1.7,
-      "range": 9,
-      "ammo_dps": {
-        "power": 35
-      },
+      "range": 11.25,
+      "ammo_dps": { "power": 35 },
       "cost_copper": 50,
-      "cost_titanium": 0,
-      "cost_thorium": 0,
       "cost_lead": 50,
       "width": 1,
       "height": 1,
       "energy_consume": 198,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": false,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "lancer": {
       "name_fr": "Lance",
       "dps": 105,
       "ammo_type": "power",
       "rate": 0.75,
-      "range": 18,
-      "ammo_dps": {
-        "power": 105
-      },
-      "cost_copper": 100,
-      "cost_titanium": 0,
-      "cost_thorium": 0,
-      "cost_lead": 50,
-      "cost_silicon": 45,
+      "range": 20.625,
+      "ammo_dps": { "power": 105 },
+      "cost_copper": 60,
+      "cost_lead": 70,
+      "cost_silicon": 60,
+      "cost_titanium": 30,
       "width": 2,
       "height": 2,
       "energy_consume": 360,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": false,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "salvo": {
       "name_fr": "Salve",
       "dps": 85,
       "ammo_type": "copper",
       "rate": 7.7,
-      "range": 14,
-      "ammo_dps": {
-        "copper": 85,
-        "graphite": 155,
-        "silicon": 115,
-        "thorium": 225
-      },
+      "range": 19.0,
+      "ammo_dps": { "copper": 85, "graphite": 155, "silicon": 115, "thorium": 225 },
       "cost_copper": 100,
-      "cost_titanium": 50,
-      "cost_thorium": 0,
       "cost_graphite": 80,
+      "cost_titanium": 50,
       "width": 2,
       "height": 2,
       "energy_consume": 0,
-      "craftable_ammo": [
-        "graphite",
-        "silicon"
-      ],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "ripple": {
       "name_fr": "Ondulation",
       "dps": 132,
       "ammo_type": "graphite",
       "rate": 4,
-      "range": 28,
-      "ammo_dps": {
-        "graphite": 132,
-        "silicon": 132,
-        "pyratite": 180
-      },
+      "range": 36.25,
+      "ammo_dps": { "graphite": 132, "silicon": 132, "plastanium": 160, "pyratite": 180 },
       "cost_copper": 150,
-      "cost_titanium": 60,
-      "cost_thorium": 0,
       "cost_graphite": 135,
+      "cost_titanium": 60,
       "width": 3,
       "height": 3,
       "energy_consume": 0,
-      "craftable_ammo": [
-        "graphite",
-        "silicon"
-      ],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": false,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "fuse": {
       "name_fr": "Fusible",
       "dps": 340,
       "ammo_type": "copper",
       "rate": 1.7,
-      "range": 13,
-      "ammo_dps": {
-        "copper": 340,
-        "titanium": 400,
-        "thorium": 540
-      },
+      "range": 11.25,
+      "ammo_dps": { "copper": 340, "titanium": 400, "thorium": 540 },
       "cost_copper": 225,
-      "cost_titanium": 0,
-      "cost_thorium": 100,
       "cost_graphite": 225,
+      "cost_thorium": 100,
       "width": 3,
       "height": 3,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "spectre": {
       "name_fr": "Spectre",
-      "dps": 120,
+      "dps": 350,
       "ammo_type": "thorium",
-      "rate": 2.5,
-      "range": 26,
-      "ammo_dps": {
-        "thorium": 120
-      },
-      "cost_copper": 150,
-      "cost_titanium": 75,
-      "cost_thorium": 50,
+      "rate": 8.5,
+      "range": 32.5,
+      "ammo_dps": { "graphite": 260, "thorium": 350, "pyratite": 300 },
+      "cost_copper": 900,
+      "cost_graphite": 300,
+      "cost_thorium": 250,
       "width": 4,
       "height": 4,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "meltdown": {
       "name_fr": "Fusion",
       "dps": 220,
       "ammo_type": "power",
       "rate": 1.5,
-      "range": 25,
-      "ammo_dps": {
-        "power": 220
-      },
-      "cost_copper": 120,
-      "cost_titanium": 100,
-      "cost_thorium": 75,
-      "cost_silicon": 50,
+      "range": 24.375,
+      "ammo_dps": { "power": 220 },
+      "cost_copper": 1200,
+      "cost_lead": 350,
+      "cost_graphite": 300,
+      "cost_silicon": 325,
       "width": 4,
       "height": 4,
-      "energy_consume": 120,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "energy_consume": 1020,
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"],
+      "capacites": ["liquids"]
     },
     "foreshadow": {
-      "name_fr": "Présage",
+      "name_fr": "Presage",
       "dps": 500,
-      "ammo_type": "thorium",
+      "ammo_type": "surge-alloy",
       "rate": 1,
-      "range": 30,
-      "ammo_dps": {
-        "thorium": 500
-      },
-      "cost_copper": 250,
-      "cost_titanium": 150,
-      "cost_thorium": 100,
-      "cost_silicon": 100,
+      "range": 62.5,
+      "ammo_dps": { "surge-alloy": 500 },
+      "cost_copper": 1000,
+      "cost_metaglass": 600,
+      "cost_surge-alloy": 300,
+      "cost_plastanium": 200,
+      "cost_silicon": 600,
       "width": 4,
       "height": 4,
-      "energy_consume": 240,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "energy_consume": 600,
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "swarmer": {
       "name_fr": "Essaim",
-      "dps": 60,
-      "ammo_type": "thorium",
+      "dps": 180,
+      "ammo_type": "plastanium",
       "rate": 15,
-      "range": 12,
-      "ammo_dps": {
-        "thorium": 60
-      },
-      "cost_copper": 100,
-      "cost_titanium": 50,
-      "cost_thorium": 25,
+      "range": 30.0,
+      "ammo_dps": { "thorium": 60, "pyratite": 140, "plastanium": 180, "surge-alloy": 240 },
+      "cost_graphite": 35,
+      "cost_titanium": 35,
+      "cost_silicon": 30,
       "width": 2,
       "height": 2,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "cyclone": {
       "name_fr": "Cyclone",
-      "dps": 120,
-      "ammo_type": "thorium",
+      "dps": 190,
+      "ammo_type": "plastanium",
       "rate": 2.5,
-      "range": 26,
-      "ammo_dps": {
-        "thorium": 120
-      },
-      "cost_copper": 150,
-      "cost_titanium": 75,
-      "cost_thorium": 50,
+      "range": 25.0,
+      "ammo_dps": { "metaglass": 120, "plastanium": 190, "surge-alloy": 260, "blast-compound": 180 },
+      "cost_copper": 200,
+      "cost_titanium": 125,
       "width": 3,
       "height": 3,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"]
     },
     "tsunami": {
       "name_fr": "Tsunami",
       "dps": 180,
-      "ammo_type": "thorium",
+      "ammo_type": "power",
       "rate": 3,
-      "range": 22,
-      "ammo_dps": {
-        "thorium": 180
-      },
-      "cost_copper": 180,
-      "cost_titanium": 90,
-      "cost_thorium": 60,
+      "range": 23.75,
+      "ammo_dps": { "power": 180 },
+      "cost_lead": 400,
+      "cost_metaglass": 100,
+      "cost_titanium": 250,
+      "cost_thorium": 100,
       "width": 3,
       "height": 3,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ],
-      "capacites": [
-        "liquids"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"],
+      "capacites": ["liquids"]
     },
     "wave": {
       "name_fr": "Vague",
-      "dps": 150,
-      "ammo_type": "thorium",
+      "dps": 110,
+      "ammo_type": "power",
       "rate": 2,
-      "range": 24,
-      "ammo_dps": {
-        "thorium": 150
-      },
-      "cost_copper": 160,
-      "cost_titanium": 80,
-      "cost_thorium": 55,
-      "cost_silicon": 40,
-      "width": 3,
-      "height": 3,
+      "range": 13.75,
+      "ammo_dps": { "power": 110 },
+      "cost_lead": 75,
+      "cost_metaglass": 45,
+      "width": 2,
+      "height": 2,
       "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ],
-      "capacites": [
-        "liquids"
-      ]
+      "targets_air": true,
+      "targets_ground": true,
+      "boosters": ["water", "cryofluid"],
+      "capacites": ["liquids"]
     },
     "parallax": {
       "name_fr": "Parallaxe",
       "dps": 180,
-      "ammo_type": "thorium",
+      "ammo_type": "power",
       "rate": 3,
-      "range": 22,
-      "ammo_dps": {
-        "thorium": 180
-      },
-      "cost_copper": 180,
+      "range": 28.75,
+      "ammo_dps": { "power": 180 },
+      "cost_silicon": 120,
       "cost_titanium": 90,
-      "cost_silicon": 40,
-      "width": 3,
-      "height": 3,
-      "energy_consume": 0,
-      "craftable_ammo": [],
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_graphite": 30,
+      "width": 2,
+      "height": 2,
+      "energy_consume": 198,
+      "targets_air": true,
+      "targets_ground": false,
+      "boosters": []
     }
   },
   "turrets_protection": {
     "mender": {
-      "name_fr": "Reparateur (Gardien)",
-      "type": "guardian",
+      "name_fr": "Gardien",
       "kind": "healer",
-      "dps": 0,
-      "range": 5,
-      "ammo_type": "silicon",
-      "ammo_optional": true,
-      "rate": 0.3,
-      "heal_percent": 12,
-      "reload_s": 3.33,
-      "cost_copper": 25,
-      "cost_titanium": 0,
-      "cost_thorium": 0,
-      "cost_lead": 30,
+      "range": 5.0,
+      "range_phase_boost": 8.5,
+      "heal_percent": 4,
+      "energy_consume": 18,
       "width": 1,
       "height": 1,
-      "energy_consume": 18,
-      "coverage_percent": 10,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_lead": 30,
+      "cost_copper": 25
     },
     "mend-projector": {
-      "name_fr": "Projecteur Soignant",
-      "type": "healer_projecteur",
+      "name_fr": "Projecteur soignant",
       "kind": "healer",
-      "dps": 0,
-      "range": 10.6,
-      "ammo_type": "phase-fabric",
-      "ammo_optional": true,
-      "rate": 0.24,
+      "range": 10.0,
+      "range_phase_boost": 16.25,
       "heal_percent": 11,
-      "reload_s": 4.17,
-      "cost_copper": 50,
-      "cost_titanium": 25,
-      "cost_thorium": 0,
-      "cost_lead": 100,
-      "cost_silicon": 40,
+      "energy_consume": 90,
       "width": 2,
       "height": 2,
-      "energy_consume": 18,
-      "coverage_percent": 40,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_lead": 100,
+      "cost_titanium": 25,
+      "cost_silicon": 40
     },
     "force-projector": {
       "name_fr": "Projecteur de champ de force",
-      "type": "shield_projector",
       "kind": "shield",
-      "dps": 0,
-      "range": 10.1,
-      "ammo_type": "phase-fabric",
-      "ammo_optional": true,
-      "health": 750,
+      "range": 12.7,
+      "range_phase_boost": 17.7,
+      "shield_health": 750,
+      "energy_consume": 240,
+      "width": 3,
+      "height": 3,
       "cost_lead": 100,
       "cost_titanium": 75,
       "cost_silicon": 125,
-      "width": 3,
-      "height": 3,
-      "energy_consume": 240,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "boosters": ["water", "cryofluid"]
     },
     "overdrive-projector": {
       "name_fr": "Projecteur accelerant",
-      "type": "overdrive",
       "kind": "overdrive",
-      "dps": 0,
       "range": 10.0,
-      "speed_boost": 1.5,
-      "ammo_type": "phase-fabric",
-      "ammo_optional": true,
+      "range_phase_boost": 16.875,
+      "speed_boost": 2.25,
+      "energy_consume": 210,
+      "width": 2,
+      "height": 2,
       "cost_lead": 100,
       "cost_titanium": 75,
       "cost_silicon": 75,
-      "cost_plastanium": 30,
-      "width": 2,
-      "height": 2,
-      "energy_consume": 210
+      "cost_plastanium": 30
     },
     "overdrive-dome": {
       "name_fr": "Dome accelerant",
-      "type": "overdrive",
       "kind": "overdrive",
-      "dps": 0,
-      "range": 10.6,
+      "range": 10.625,
+      "range_phase_boost": 10.625,
       "speed_boost": 2.5,
-      "ammo_type": "phase-fabric",
-      "ammo_optional": false,
+      "energy_consume": 450,
+      "width": 3,
+      "height": 3,
       "cost_lead": 200,
       "cost_titanium": 130,
       "cost_silicon": 130,
       "cost_plastanium": 80,
-      "cost_surge-alloy": 120,
-      "width": 3,
-      "height": 3,
-      "energy_consume": 450
+      "cost_surge-alloy": 120
     }
   },
   "distribution_blocks": {
@@ -495,440 +371,226 @@
       "speed": 4.2,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_copper": 1,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_copper": 1
     },
     "titanium-conveyor": {
       "name_fr": "Convoyeur en titane",
       "kind": "conveyor",
-      "speed": 11,
+      "speed": 11.0,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
       "cost_copper": 1,
       "cost_lead": 1,
-      "cost_titanium": 1,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_titanium": 1
+    },
+    "plastanium-conveyor": {
+      "name_fr": "Convoyeur en plastanium",
+      "kind": "conveyor",
+      "speed": 40.0,
+      "width": 1,
+      "height": 1,
+      "cost_plastanium": 1,
+      "cost_silicon": 1,
+      "cost_graphite": 1
     },
     "junction": {
       "name_fr": "Jonction",
       "kind": "junction",
-      "speed": 6,
+      "speed": 26.0,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_copper": 2,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_copper": 2
     },
     "bridge-conveyor": {
       "name_fr": "Convoyeur pont",
       "kind": "bridge",
-      "speed": 4.2,
+      "speed": 11.0,
       "range": 4,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_graphite": 6,
-      "cost_lead": 6,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_copper": 6,
+      "cost_lead": 6
     },
     "phase-conveyor": {
       "name_fr": "Convoyeur de phase",
       "kind": "bridge",
-      "speed": 11,
+      "speed": 30.0,
       "range": 12,
+      "energy_consume": 18,
       "width": 1,
       "height": 1,
-      "energy_consume": 18,
       "cost_phase-fabric": 5,
       "cost_silicon": 7,
       "cost_lead": 10,
-      "cost_graphite": 10,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
-    },
-    "sorter": {
-      "name_fr": "Trieur",
-      "kind": "sorter",
-      "speed": 8,
-      "width": 1,
-      "height": 1,
-      "energy_consume": 0,
-      "cost_lead": 2,
-      "cost_copper": 2,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
-    },
-    "inverted-sorter": {
-      "name_fr": "Trieur inverse",
-      "kind": "sorter",
-      "speed": 8,
-      "width": 1,
-      "height": 1,
-      "energy_consume": 0,
-      "cost_lead": 2,
-      "cost_copper": 2,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_graphite": 10
     },
     "router": {
       "name_fr": "Routeur",
       "kind": "router",
-      "speed": 8,
+      "speed": 11.0,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_copper": 3,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_copper": 3
     },
     "distributor": {
       "name_fr": "Distributeur",
       "kind": "router",
-      "speed": 8,
+      "speed": 11.0,
       "width": 2,
       "height": 2,
-      "energy_consume": 0,
-      "cost_lead": 4,
       "cost_copper": 4,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_lead": 4
     },
     "overflow-gate": {
       "name_fr": "Barriere de debordement",
       "kind": "gate",
-      "speed": 8,
+      "speed": 11.0,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_lead": 2,
-      "cost_copper": 4
+      "cost_copper": 4,
+      "cost_lead": 2
     },
     "underflow-gate": {
-      "name_fr": "Barriere de repulsion",
+      "name_fr": "Barriere de refoulement",
       "kind": "gate",
-      "speed": 8,
+      "speed": 11.0,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_lead": 2,
-      "cost_copper": 4
+      "cost_copper": 4,
+      "cost_lead": 2
     },
-    "unloader": {
-      "name_fr": "Dechargeur",
-      "kind": "unloader",
-      "speed": 11,
+    "sorter": {
+      "name_fr": "Trieur",
+      "kind": "sorter",
+      "speed": 11.0,
       "width": 1,
       "height": 1,
-      "energy_consume": 0,
-      "cost_titanium": 25,
-      "cost_silicon": 30,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_copper": 2,
+      "cost_lead": 2
     },
-    "mass-driver": {
-      "name_fr": "Pilote de masse",
-      "kind": "mass-driver",
-      "speed": 60,
-      "range": 55,
-      "width": 3,
-      "height": 3,
-      "energy_consume": 105,
-      "cost_titanium": 125,
-      "cost_silicon": 75,
-      "cost_lead": 125,
-      "cost_thorium": 50
+    "inverted-sorter": {
+      "name_fr": "Trieur inverse",
+      "kind": "sorter",
+      "speed": 11.0,
+      "width": 1,
+      "height": 1,
+      "cost_copper": 2,
+      "cost_lead": 2
     },
     "container": {
       "name_fr": "Conteneur",
       "kind": "storage",
-      "speed": 0,
       "capacity": 300,
       "width": 2,
       "height": 2,
-      "energy_consume": 0,
       "cost_titanium": 100
     },
     "vault": {
       "name_fr": "Coffre-fort",
       "kind": "storage",
-      "speed": 0,
       "capacity": 1000,
       "width": 3,
       "height": 3,
-      "energy_consume": 0,
       "cost_titanium": 250,
       "cost_thorium": 125
+    },
+    "unloader": {
+      "name_fr": "Dechargeur",
+      "kind": "unloader",
+      "speed": 11.0,
+      "width": 1,
+      "height": 1,
+      "cost_titanium": 25,
+      "cost_silicon": 30
     }
   },
   "energy_sources": {
-    "combustion-generator": {
-      "name_fr": "Generateur a combustion",
-      "role": "generator",
-      "capacity": 60,
-      "fuel": [
-        "coal",
-        "spore-pod",
-        "pyratite",
-        "blast-compound"
-      ],
-      "width": 1,
-      "height": 1,
-      "cost_copper": 25,
-      "cost_titanium": 0,
-      "cost_lead": 15
-    },
-    "solar-panel": {
-      "name_fr": "Panneau solaire",
-      "role": "generator",
-      "capacity": 6,
-      "fuel": null,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 40,
-      "cost_titanium": 0,
-      "cost_silicon": 15
-    },
-    "large-solar-panel": {
-      "name_fr": "Grand panneau solaire",
-      "role": "generator",
-      "capacity": 78,
-      "fuel": null,
-      "width": 3,
-      "height": 3,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_lead": 80,
-      "cost_silicon": 110
-    },
     "power-node": {
       "name_fr": "Noeud d'energie",
       "role": "node",
-      "capacity": 0,
-      "fuel": null,
       "laser_links": 10,
-      "laser_range": 6,
+      "laser_range": 6.0,
       "width": 1,
       "height": 1,
       "cost_copper": 1,
-      "cost_titanium": 0,
       "cost_lead": 3
+    },
+    "power-node-large": {
+      "name_fr": "Grand noeud d'energie",
+      "role": "node",
+      "laser_links": 15,
+      "laser_range": 15.0,
+      "width": 2,
+      "height": 2,
+      "cost_titanium": 5,
+      "cost_lead": 10,
+      "cost_silicon": 3
+    },
+    "surge-tower": {
+      "name_fr": "Tour de surtension",
+      "role": "node",
+      "laser_links": 2,
+      "laser_range": 30.0,
+      "width": 2,
+      "height": 2,
+      "cost_titanium": 7,
+      "cost_lead": 10,
+      "cost_silicon": 15,
+      "cost_surge-alloy": 15
     },
     "battery": {
       "name_fr": "Batterie",
       "role": "battery",
-      "capacity": 0,
-      "stored": 1000,
-      "fuel": null,
+      "stored": 4000,
       "width": 1,
       "height": 1,
       "cost_copper": 5,
-      "cost_titanium": 0,
-      "cost_lead": 50
-    }
-  },
-  "walls": {
-    "copper-wall": {
-      "name_fr": "Mur en cuivre",
-      "health": 320,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 6,
-      "cost_titanium": 0
+      "cost_lead": 20
     },
-    "copper-wall-large": {
-      "name_fr": "Grand mur en cuivre",
-      "health": 1280,
-      "width": 2,
-      "height": 2,
-      "cost_copper": 24,
-      "cost_titanium": 0
-    },
-    "titanium-wall": {
-      "name_fr": "Mur en titane",
-      "health": 440,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 0,
-      "cost_titanium": 6
-    },
-    "titanium-wall-large": {
-      "name_fr": "Grand mur en titane",
-      "health": 1760,
-      "width": 2,
-      "height": 2,
-      "cost_copper": 0,
-      "cost_titanium": 24
-    },
-    "thorium-wall": {
-      "name_fr": "Mur en thorium",
-      "health": 800,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_thorium": 6
-    },
-    "thorium-wall-large": {
-      "name_fr": "Grand mur en thorium",
-      "health": 3200,
-      "width": 2,
-      "height": 2,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_thorium": 24
-    },
-    "plastanium-wall": {
-      "name_fr": "Mur en plastanium",
-      "health": 750,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_plastanium": 5,
-      "cost_metaglass": 2
-    },
-    "plastanium-wall-large": {
-      "name_fr": "Grand mur en plastanium",
-      "health": 3000,
-      "width": 2,
-      "height": 2,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_plastanium": 20,
-      "cost_metaglass": 8
-    },
-    "surge-wall": {
-      "name_fr": "Mur en alliage surge",
-      "health": 920,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_surge-alloy": 6
-    },
-    "surge-wall-large": {
-      "name_fr": "Grand mur en alliage surge",
-      "health": 3680,
-      "width": 2,
-      "height": 2,
-      "cost_copper": 0,
-      "cost_titanium": 0,
-      "cost_surge-alloy": 24
-    }
-  },
-  "crafting_blocks": {
-    "graphite-press": {
-      "name_fr": "Presse a graphite",
-      "input": "coal",
-      "output": "graphite",
-      "time": 1.5,
-      "width": 2,
-      "height": 2,
-      "energy_consume": 0,
-      "cost_copper": 75,
-      "cost_lead": 30
-    },
-    "silicon-smelter": {
-      "name_fr": "Fonderie de silicium",
-      "input": [
-        "coal",
-        "sand"
-      ],
-      "output": "silicon",
-      "time": 0.67,
+    "battery-large": {
+      "name_fr": "Grande batterie",
+      "role": "battery",
+      "stored": 50000,
       "width": 3,
       "height": 3,
-      "energy_consume": 30,
-      "cost_copper": 30,
-      "cost_lead": 25
-    },
-    "kiln": {
-      "name_fr": "Four a verre",
-      "input": [
-        "lead",
-        "sand"
-      ],
-      "output": "metaglass",
-      "time": 0.5,
-      "width": 2,
-      "height": 2,
-      "energy_consume": 36,
-      "cost_copper": 60,
-      "cost_graphite": 30,
-      "cost_lead": 30,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_titanium": 20,
+      "cost_lead": 50,
+      "cost_silicon": 30
     }
   },
-  "liquid_blocks": {
-    "mechanical-pump": {
-      "name_fr": "Pompe mecanique",
-      "kind": "pump",
-      "flow": 7,
-      "capacity": 10,
-      "width": 1,
-      "height": 1,
-      "cost_copper": 15,
-      "cost_metaglass": 10,
-      "note": "doit etre pose sur une case liquide",
-      "range": 1
-    },
+
+    "liquid_blocks": {
     "conduit": {
       "name_fr": "Conduit",
       "kind": "conduit",
-      "flow": 4,
-      "capacity": 10,
+      "flow": 10.0,
       "width": 1,
       "height": 1,
-      "cost_metaglass": 1,
-      "boosters": [
-        "water",
-        "cryofluid"
-      ]
+      "cost_metaglass": 1
     },
     "pulse-conduit": {
       "name_fr": "Conduit a impulsion",
       "kind": "conduit",
-      "flow": 16,
-      "capacity": 16,
+      "flow": 16.0,
       "width": 1,
       "height": 1,
       "cost_titanium": 2,
       "cost_metaglass": 1
     },
+    "plated-conduit": {
+      "name_fr": "Conduit blinde",
+      "kind": "conduit",
+      "flow": 24.0,
+      "width": 1,
+      "height": 1,
+      "cost_thorium": 2,
+      "cost_metaglass": 1,
+      "cost_plastanium": 1
+    },
     "liquid-router": {
       "name_fr": "Routeur de liquide",
       "kind": "router",
-      "flow": 4,
-      "capacity": 20,
+      "flow": 4.0,
       "width": 1,
       "height": 1,
       "cost_graphite": 4,
@@ -937,19 +599,17 @@
     "liquid-junction": {
       "name_fr": "Jonction de liquide",
       "kind": "junction",
-      "flow": 4,
-      "capacity": 10,
+      "flow": 20.0,
       "width": 1,
       "height": 1,
       "cost_graphite": 4,
       "cost_metaglass": 8
     },
     "bridge-conduit": {
-      "name_fr": "Conduit pont",
+      "name_fr": "Pont conduit",
       "kind": "bridge",
-      "flow": 4,
+      "flow": 4.0,
       "range": 4,
-      "capacity": 10,
       "width": 1,
       "height": 1,
       "cost_graphite": 4,
@@ -958,12 +618,11 @@
     "phase-conduit": {
       "name_fr": "Conduit de phase",
       "kind": "bridge",
-      "flow": 16,
+      "flow": 30.0,
       "range": 12,
-      "capacity": 10,
+      "energy_consume": 18,
       "width": 1,
       "height": 1,
-      "energy_consume": 18,
       "cost_phase-fabric": 5,
       "cost_silicon": 7,
       "cost_metaglass": 20,
@@ -972,7 +631,7 @@
     "liquid-container": {
       "name_fr": "Conteneur de liquide",
       "kind": "storage",
-      "flow": 0,
+      "flow": 0.0,
       "capacity": 700,
       "width": 2,
       "height": 2,
@@ -982,26 +641,100 @@
     "liquid-tank": {
       "name_fr": "Reservoir de liquide",
       "kind": "storage",
-      "flow": 0,
+      "flow": 0.0,
       "capacity": 1800,
       "width": 3,
       "height": 3,
       "cost_titanium": 30,
       "cost_metaglass": 40
+    }
+  },
+  "walls": {
+    "copper-wall": {
+      "name_fr": "Mur en cuivre",
+      "health": 320,
+      "width": 1,
+      "height": 1,
+      "cost_copper": 6
     },
-    "water-extractor": {
-      "name_fr": "Extracteur d'eau",
-      "kind": "extractor",
-      "flow": 6.5,
-      "capacity": 30,
+    "copper-wall-large": {
+      "name_fr": "Grand mur en cuivre",
+      "health": 1280,
       "width": 2,
       "height": 2,
-      "energy_consume": 90,
-      "cost_metaglass": 30,
-      "cost_graphite": 30,
-      "cost_lead": 30,
-      "cost_copper": 30,
-      "range": 1
+      "cost_copper": 24
+    },
+    "titanium-wall": {
+      "name_fr": "Mur en titane",
+      "health": 440,
+      "width": 1,
+      "height": 1,
+      "cost_titanium": 6
+    },
+    "titanium-wall-large": {
+      "name_fr": "Grand mur en titane",
+      "health": 1760,
+      "width": 2,
+      "height": 2,
+      "cost_titanium": 24
+    },
+    "plastanium-wall": {
+      "name_fr": "Mur en plastanium",
+      "health": 520,
+      "width": 1,
+      "height": 1,
+      "cost_plastanium": 5,
+      "cost_metaglass": 2
+    },
+    "plastanium-wall-large": {
+      "name_fr": "Grand mur en plastanium",
+      "health": 2080,
+      "width": 2,
+      "height": 2,
+      "cost_plastanium": 20,
+      "cost_metaglass": 8
+    },
+    "thorium-wall": {
+      "name_fr": "Mur en thorium",
+      "health": 800,
+      "width": 1,
+      "height": 1,
+      "cost_thorium": 6
+    },
+    "thorium-wall-large": {
+      "name_fr": "Grand mur en thorium",
+      "health": 3200,
+      "width": 2,
+      "height": 2,
+      "cost_thorium": 24
+    },
+    "phase-wall": {
+      "name_fr": "Mur en tissu phase",
+      "health": 600,
+      "width": 1,
+      "height": 1,
+      "cost_phase-fabric": 6
+    },
+    "phase-wall-large": {
+      "name_fr": "Grand mur en tissu phase",
+      "health": 2400,
+      "width": 2,
+      "height": 2,
+      "cost_phase-fabric": 24
+    },
+    "surge-wall": {
+      "name_fr": "Mur en alliage supercharge",
+      "health": 920,
+      "width": 1,
+      "height": 1,
+      "cost_surge-alloy": 6
+    },
+    "surge-wall-large": {
+      "name_fr": "Grand mur en alliage supercharge",
+      "health": 3680,
+      "width": 2,
+      "height": 2,
+      "cost_surge-alloy": 24
     }
   }
 }

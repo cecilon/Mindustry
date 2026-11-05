@@ -1,0 +1,269 @@
+{
+  "A": {
+    "id": "surge-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "B": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "C": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "D": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "E": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "F": {
+    "id": "cyclone",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "G": {
+    "id": "wave",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "H": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "I": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "J": {
+    "id": "parallax",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "K": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "L": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "M": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "N": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "O": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "P": {
+    "id": "lancer",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "Q": {
+    "id": "duo",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "R": {
+    "id": "mend-projector",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "S": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "T": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 2,
+    "config": "graphite"
+  },
+  "U": {
+    "id": "router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "V": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "W": {
+    "id": "force-projector",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "X": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "Y": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "config": "graphite"
+  },
+  "Z": {
+    "id": "vault",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "a": {
+    "id": "liquid-tank",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "b": {
+    "id": "power-node-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "c": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "config": "surge_alloy"
+  },
+  "d": {
+    "id": "swarmer",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "e": {
+    "id": "hail",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "f": {
+    "id": "router",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "g": {
+    "id": "overflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "h": {
+    "id": "ripple",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "i": {
+    "id": "battery-large",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "j": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "k": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "l": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "m": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "n": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "o": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "p": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "q": {
+    "id": "overflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "r": {
+    "id": "surge-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  }
+}

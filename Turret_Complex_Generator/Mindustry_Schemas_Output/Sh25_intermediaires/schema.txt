@@ -1,0 +1,38 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*
+******************************************
+A*BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDA*
+**BE   F**F**F**F**F**F**F**F**F**E  G*H**
+A*I  J****************************J* **HA*
+**I  *******************************   H**
+A*I KLMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN  HA*
+**IEOF**F**EPF**F**F**F**F**F**F**Q*NQ*H**
+A*I O******PP***********************N**HA*
+**I O******R**********************E S  H**
+A*BDODCDDDD**DDDDDDDDDDDDDDDDDDDDDDDSDTUA*
+**BEOV*F**F**F**F**W**F**F**F**V*EJ*NQ*H**
+A*I O**************************** **N**HA*
+**I O  ************************  R* S  H**
+A*I KMMMMMMMMMMMMMMLXMMMMMMMMMMR***LN  HA*
+**I OJ*F**F**E HYZ**a**E F**F****F**NE H**
+A*I O********V*Hb******V*******V****S  HA*
+**I Occ********cc*******************S  H**
+A*BDODCDDDDDDDDCdCeDDDDDDDDDDDDDDDDDSDCUA*
+**B OV*V*V*V*V*R*V*V*V*V*V*V*V*V*cJ*NJ*H**
+A*I O**************************** **N**HA*
+**I O                               S  H**
+A*I KLMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN  HA*
+**I Of**f**f**f**f**f**f**f**f**f** S  H**
+A*I O****************************** S  HA*
+**I O****************************** S  H**
+A*BDODCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDSDgUA*
+**B OE                  E      E    S  H**
+A*I O                               S  HA*
+**I O                               S  H**
+A*I O                               S  HA*
+**I O                            h**S  H**
+A*I OR*                  R*      ***N  HA*
+**I O**                  **      ***i jU**
+A*B kllllllllllllllllllllllllllmmmmmS nHA*
+**joooooooooooooooooooooooooooooojpooooH**
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*IqqqqA*q
+**********************************Iqiqn**q

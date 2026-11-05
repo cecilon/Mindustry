@@ -1,0 +1,35 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*B
+**********************************B
+A*CDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDA*
+**CE F*GEEH**EEH**EGEH**F*GEE F*I**
+A*JE **EEE***K****EEE*****EEE **IA*
+**JE EEEEE********EEE***EEEEE EEI**
+A*J LMMMMMMMMMMMMMMMMMMMMMMMMN  IA*
+**JEOEEGEEEGEEEGEGEEF*GEEGEEENF*I**
+A*JEOEEEEEEEEEEEEEEE**EEEEEEEN**IA*
+**JEOEEEGEEEEEEEEEEEEEEEEEEEENEEI**
+A*CDODDDDDDDDDDDDDDDDDDDDDDDDPDQRA*
+**CEOGES***S***S***F*S***F*GENF*I**
+A*JEOEE********************EEN**IA*
+**JEOF*************F*****K*F*NF*I**
+A*JEO************************N**IA*
+**J LMMMMMMMMMMMMMMMMMMMMMMMMN  I**
+A*JEOGEEET***F*U**F*ET***GEEENF*IA*
+**JEOEEEE***********E****EEEEN**I**
+A*JEOEEEE****V****V*E****EEEENF*IA*
+**JEOEEEE******GWW**G****EEEEN**I**
+A*CDODDDDDDDXXDDDDDDDDDDDDDDDPDXRA*
+**CEOY*V*V*EIZa*b*V*V*V*V*GEENEEI**
+A*JEO******EIc************EEENEEIA*
+**J LMMMMMMMMMMMMMMMMMMMMMMMMN  I**
+A*JEOd**d**d**d**d**d**d**EEENEEIA*
+**JEO*********************EY*NEEI**
+A*CEO*********************E**NEEIA*
+**CDODDDDDDDDDDDDDDDDDDDDDDDDPDeR**
+A*CGOd**d**d**d**d**d**d**d**NF*IA*
+**JfO************************N**I**
+A*JfO************************NGgIA*
+**C hiiiiiiiiiiiiiiiiiiiiiiiiNjkI**
+A*gllllllllllllllllllllllllllllgIA*
+**A*A*A*A*A*A*A*A*A*A*A*A*A*A*BBB**
+BB****************************jkBBB

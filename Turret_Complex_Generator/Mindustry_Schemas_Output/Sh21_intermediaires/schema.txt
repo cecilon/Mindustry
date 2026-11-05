@@ -1,0 +1,38 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*
+******************************************
+A*BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDA*
+**BE F*G**G**G**G**EEG**G**G**G**F*E HEI**
+A*JE **************F***************E EEIA*
+**JE EE**************************EEE EEI**
+A*J KLMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN  IA*
+**JEOG**EEEEEG**G**G**G**HEEEG**G**ENHEI**
+A*JEO***EP*Q*************EEQ*******ENEEIA*
+**JEO***E****************EE********ENEEI**
+A*BDODCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDRDSTA*
+**BEOQ*U*EEV***V***EEEEHEEEHEEEQ*F*ENHEI**
+A*JEO****EE********W**EEEEEEEEE****ENEEIA*
+**JEOF*EEEE***********EEEEEEEEEP*P*ENEEI**
+A*JEO**EEEE***********EEEEEEEEE****ENEEIA*
+**J KLMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN  I**
+A*JEOEEEEEEEEEEX***EEEEEEHEEEEEEEEEENEEIA*
+**JEOEEEEEEEEEE****EEEEEEEEEEEEEEHEENEEI**
+A*JEOQ*U*EEQ*F*****EU*EEEEEQ*F*EEEQ*NEEIA*
+**JEO****EE********E**EEEEE****EEE**NEEI**
+A*BDODCDDDDDDDDDDCYCZDDDDDDDDDDDDDDDRDCTA*
+**BEOQ*Q*Q*Q*Q*P*Iab*Q*Q*Q*Q*Q*Q*EQ*NEEI**
+A*JEO************Ic**************E**NEEIA*
+**JEOEEEEEEEEEEEEEEEEd*EEEEEEEEEEEEENEEI**
+A*JEOEEEEEEEEEEEEEEEE**EEEEEEEEEEEEENEEIA*
+**J KMMMMMMMMMMMMMMMMLeLMMMMMMMMMMMMN  I**
+A*JEOEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEENEEIA*
+**JEOEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEENEEI**
+A*JEOEf**f**f**f**f**f**f**f**f**f**NEEIA*
+**JEOE******************************NEEI**
+A*JEOE******************************NEEIA*
+**JEOEEf**f**f**f**f**f**EEf**f**f**NEEI**
+A*JEOP*******************P**********NEEIA*
+**JEO*******************************gEhT**
+A*B ijjjjjjjjjjjjjjjjjjjjjjjjjjkkkkkR lIA*
+**hmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmhnmmmmI**
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*JooooA*o
+**********************************Jogol**o

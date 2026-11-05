@@ -1,0 +1,281 @@
+{
+  "A": {
+    "id": "surge-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "B": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "C": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "D": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "E": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "F": {
+    "id": "duo",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "G": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "H": {
+    "id": "wave",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "I": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "J": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "K": {
+    "id": "parallax",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "L": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "M": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "N": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "O": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "P": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "Q": {
+    "id": "battery",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "R": {
+    "id": "lancer",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "S": {
+    "id": "spectre",
+    "width": 4,
+    "height": 4,
+    "rotation": 0
+  },
+  "T": {
+    "id": "force-projector",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "U": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "V": {
+    "id": "power-node-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "W": {
+    "id": "mend-projector",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "X": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "Y": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 2,
+    "config": "graphite"
+  },
+  "Z": {
+    "id": "router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "a": {
+    "id": "hail",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "b": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "c": {
+    "id": "liquid-container",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "d": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "config": "surge_alloy"
+  },
+  "e": {
+    "id": "container",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "f": {
+    "id": "swarmer",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "g": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 1,
+    "config": "graphite"
+  },
+  "h": {
+    "id": "router",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "i": {
+    "id": "overflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "j": {
+    "id": "ripple",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "k": {
+    "id": "battery-large",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "l": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "m": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "n": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "o": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "p": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "q": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "r": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "s": {
+    "id": "overflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "t": {
+    "id": "surge-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  }
+}
