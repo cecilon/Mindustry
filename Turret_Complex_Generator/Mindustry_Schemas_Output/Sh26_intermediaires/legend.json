@@ -1,0 +1,257 @@
+{
+  "A": {
+    "id": "surge-wall-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "B": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "C": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "D": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "E": {
+    "id": "power-node",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "F": {
+    "id": "wave",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "G": {
+    "id": "parallax",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "H": {
+    "id": "salvo",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "I": {
+    "id": "duo",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "J": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "K": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "L": {
+    "id": "sorter",
+    "width": 1,
+    "height": 1,
+    "rotation": 2,
+    "config": "graphite"
+  },
+  "M": {
+    "id": "router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "N": {
+    "id": "tsunami",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "O": {
+    "id": "mend-projector",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "P": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "Q": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "R": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "S": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "T": {
+    "id": "force-projector",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "U": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 3
+  },
+  "V": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "W": {
+    "id": "power-node-large",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "X": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "Y": {
+    "id": "ripple",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "Z": {
+    "id": "liquid-container",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "a": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 3,
+    "config": "copper"
+  },
+  "b": {
+    "id": "container",
+    "width": 2,
+    "height": 2,
+    "rotation": 0
+  },
+  "c": {
+    "id": "hail",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "d": {
+    "id": "unloader",
+    "width": 1,
+    "height": 1,
+    "rotation": 3,
+    "config": "graphite"
+  },
+  "e": {
+    "id": "router",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "f": {
+    "id": "overflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 2
+  },
+  "g": {
+    "id": "battery-large",
+    "width": 3,
+    "height": 3,
+    "rotation": 0
+  },
+  "h": {
+    "id": "overflow-gate",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "i": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "j": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "k": {
+    "id": "titanium-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "l": {
+    "id": "liquid-router",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "m": {
+    "id": "bridge-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "n": {
+    "id": "pulse-conduit",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  },
+  "o": {
+    "id": "bridge-conveyor",
+    "width": 1,
+    "height": 1,
+    "rotation": 1
+  },
+  "p": {
+    "id": "surge-wall",
+    "width": 1,
+    "height": 1,
+    "rotation": 0
+  }
+}

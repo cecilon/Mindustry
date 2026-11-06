@@ -7,11 +7,13 @@ import sys
 import os
 import argparse
 import string
-import time
 import random
 import signal
 
 from copy import deepcopy
+from functools import lru_cache
+from concurrent.futures import ProcessPoolExecutor, as_completed
+
 from dataclasses import dataclass, field
 from typing import List, Tuple, Set
 from collections import defaultdict
@@ -19,7 +21,6 @@ from itertools import islice, combinations
 
 SEUIL_LOGISTIQUE = 0.99
 TOLERANCE_FLOTTANTE = 0.01
-TEMPS_MAX_EXECUTION = 1800
 CAPACITES_SPECIALES = {"energy", "liquids", "utilities"}
 
 CHAR_RESERVOIR = [
@@ -96,7 +97,26 @@ class Bloc:
         total_mat = sum(self.materiaux.values())
         return total_mat if total_mat > 0 else 1.0
 
-
+    def cloner(self, x: int = 0, y: int = 0, rotation: int = None, best_ammo: str = None, kind: str = None):
+        return Bloc(
+            id=self.id, nom=self.nom, largeur=self.largeur, hauteur=self.hauteur,
+            rotation=self.rotation if rotation is None else rotation,
+            type=self.type, kind=self.kind if kind is None else kind,
+            materiaux=self.materiaux, capacites=self.capacites,
+            dps_brut=self.dps_brut, portee=self.portee, rate=self.rate,
+            speed_boost=self.speed_boost, consomme_energie=self.consomme_energie,
+            energy_consume_rate=self.energy_consume_rate, energy_stored=self.energy_stored,
+            consomme_liquide=self.consomme_liquide, targets_air=self.targets_air,
+            targets_ground=self.targets_ground, laser_range=self.laser_range,
+            max_links=self.max_links, ammo_type=self.ammo_type,
+            best_ammo=self.best_ammo if best_ammo is None else best_ammo,
+            ammo_optional=self.ammo_optional, ammo_dps=self.ammo_dps,
+            health=self.health, vitesse_transport=self.vitesse_transport,
+            dps_par_taille=self.dps_par_taille, dps_par_cout=self.dps_par_cout,
+            dps_reel=self.dps_reel, dps_par_surface=self.dps_par_surface,
+            x=x, y=y, char=self.char, pair_char=self.pair_char
+        )
+        
 class Grille:
     def __init__(self, largeur: int, hauteur: int):
         self.largeur = largeur
@@ -139,16 +159,6 @@ class Grille:
                     if registre is not None and occ in registre:
                         registre.remove(occ)
 
-    def surface_utilisee_reelle(self) -> int:
-        deja_vus = set()
-        cumul = 0
-        for ligne in self.cellules:
-            for case in ligne:
-                if case is not None and id(case) not in deja_vus:
-                    deja_vus.add(id(case))
-                    cumul += case.taille()
-        return cumul
-
 
 def phase0_validation(larg_g: int, haut_g: int, liste_res: list, chemin_json: str) -> Tuple[set, set]:
     if not (5 <= larg_g <= 100 and 5 <= haut_g <= 100):
@@ -160,7 +170,10 @@ def phase0_validation(larg_g: int, haut_g: int, liste_res: list, chemin_json: st
     ens_cap = {r for r in normees if r in CAPACITES_SPECIALES}
     return ens_mat, ens_cap
 
+
 def fabricable(elem: Bloc, ens_mat: set, ens_cap: set) -> bool:
+    if elem.id == "foreshadow":
+        return ("surge-alloy" in ens_mat) and (elem.capacites <= ens_cap)
     return (set(elem.materiaux.keys()) <= ens_mat and elem.capacites <= ens_cap)
 
 
@@ -199,31 +212,20 @@ def parse_bloc(info: dict, cat_bloc: str, ens_cap: set) -> Bloc:
         portee_tir = PORTES_EXACTES.get(ident, info.get("range", info.get("portee", 0.0)))
 
     return Bloc(
-        id=ident,
-        nom=info.get("name_fr", info.get("nom", ident)),
+        id=ident, nom=info.get("name_fr", info.get("nom", ident)),
         largeur=info.get("width", info.get("largeur", 1)),
         hauteur=info.get("height", info.get("hauteur", 1)),
-        rotation=info.get("rotation", 0),
-        type=cat_bloc,
-        kind=info.get("kind", info.get("role", "")),
-        materiaux=couts_mat,
-        capacites=req_cap,
-        dps_brut=float(info.get("dps", info.get("dps_brut", 0.0))),
-        portee=float(portee_tir),
-        rate=float(info.get("rate", 1.0) or 1.0),
-        speed_boost=mult_vit,
-        consomme_energie=besoin_elec,
-        energy_consume_rate=conso_elec,
-        energy_stored=stock_elec,
-        consomme_liquide=prend_liq,
-        targets_air=bool(cible_air),
-        targets_ground=bool(cible_sol),
-        laser_range=portee_laser,
-        max_links=liens_max,
-        ammo_type=info.get("ammo_type", ""),
+        rotation=info.get("rotation", 0), type=cat_bloc,
+        kind=info.get("kind", info.get("role", "")), materiaux=couts_mat,
+        capacites=req_cap, dps_brut=float(info.get("dps", info.get("dps_brut", 0.0))),
+        portee=float(portee_tir), rate=float(info.get("rate", 1.0) or 1.0),
+        speed_boost=mult_vit, consomme_energie=besoin_elec,
+        energy_consume_rate=conso_elec, energy_stored=stock_elec,
+        consomme_liquide=prend_liq, targets_air=bool(cible_air),
+        targets_ground=bool(cible_sol), laser_range=portee_laser,
+        max_links=liens_max, ammo_type=info.get("ammo_type", ""),
         ammo_optional=info.get("ammo_optional", False if cat_bloc == "turret" else True),
-        ammo_dps=info.get("ammo_dps", {}),
-        health=float(info.get("health", 0.0)),
+        ammo_dps=info.get("ammo_dps", {}), health=float(info.get("health", 0.0)),
         vitesse_transport=debit,
     )
 
@@ -244,15 +246,6 @@ def calculer_dps_reel(elem: Bloc, ens_ammo: set) -> Tuple[float, str]:
     return float(elem.dps_brut), str(elem.ammo_type or "")
 
 
-def phase2_ciblage(liste_t: list, larg_g: int, haut_g: int) -> Tuple[float, float, Tuple[float, float], int]:
-    if not liste_t:
-        raise ValueError("Aucune tourelle disponible.")
-    p_max = max(t.portee for t in liste_t)
-    dist_c = 8
-    pos_c = (larg_g / 2.0, -8.0)
-    return p_max, dist_c, pos_c, haut_g
-
-
 def calculer_zone_tourelles(larg_g: int, haut_g: int, sans_mur: bool) -> Tuple[Tuple[int, int, int, int], int, str]:
     if sans_mur:
         return (0, larg_g, 0, haut_g), 0, "none"
@@ -263,18 +256,12 @@ def calculer_zone_tourelles(larg_g: int, haut_g: int, sans_mur: bool) -> Tuple[T
         return (1, larg_g - 1, 1, haut_g - 1), 1, "small_lateral_loop"
     else:
         return (2, larg_g - 2, 2, haut_g - 2), 2, "large_2x2_loop"
-
+        
 def phase1_chargement(chemin_json: str, ens_mat: set, ens_cap: set, ens_ammo: set):
     with open(chemin_json, "r", encoding="utf-8") as flux_f:
         donnees = json.load(flux_f)
 
-    cat_tourelles = []
-    cat_logistique = []
-    cat_liquides = []
-    cat_protection = []
-    cat_energie = []
-    cat_soin = []
-
+    cat_tourelles, cat_logistique, cat_liquides, cat_protection, cat_energie, cat_soin = [], [], [], [], [], []
     brut_off = dict(donnees.get("turrets_offense", {}))
     brut_off.setdefault("scatter", {
         "name_fr": "Eparpilleur", "dps": 90, "ammo_type": "lead", "rate": 6.6, "range": 22.5,
@@ -390,6 +377,7 @@ def phase1_chargement(chemin_json: str, ens_mat: set, ens_cap: set, ens_ammo: se
     cat_protection.sort(key=lambda w: (-w.health, w.cout_total()))
     return cat_tourelles, cat_logistique, cat_liquides, cat_protection, cat_energie, cat_soin
 
+
 def _lignes_couloirs_internes(cadre_z: Tuple[int, int, int, int], larg_g: int,
                               haut_g: int, mode_liq: bool = False,
                               pas_force: int = 0) -> Tuple[Set[int], Set[int]]:
@@ -403,34 +391,20 @@ def _lignes_couloirs_internes(cadre_z: Tuple[int, int, int, int], larg_g: int,
     if mode_liq and (by_max - by_min) >= 14:
         yl_bas = by_max - 2
         ens_liq.add(yl_bas)
-        ya_bas = yl_bas - 4
+        ya_bas = yl_bas - 5
         if ya_bas > by_min + 4:
             ens_ammo.add(ya_bas)
         else:
-            ya_bas = yl_bas
+            ya_bas = yl_bas - 1
 
-        cur_y = by_min
-        est_tour_liq = True
-        idx_rang = 0
-        while True:
-            reste_y = ya_bas - cur_y
-            if reste_y <= 5:
-                break
-            if pas_force in (4, 5) and cur_y + pas_force <= ya_bas - 4:
-                saut_y = pas_force
-            else:
-                saut_y = 4 if (idx_rang == 0 or cur_y >= 20) else 5
-            if cur_y + saut_y >= ya_bas - 3:
-                if est_tour_liq and (ya_bas - cur_y) >= 7:
-                    ens_liq.add(cur_y + (ya_bas - cur_y) // 2)
-                break
-            cur_y += saut_y
-            if est_tour_liq:
-                ens_liq.add(cur_y)
-            else:
-                ens_ammo.add(cur_y)
-            est_tour_liq = not est_tour_liq
-            idx_rang += 1
+        cur_y = by_min + 4
+        ens_ammo.add(cur_y)
+        ens_liq.add(cur_y + 4)
+        cur_y += 8
+        while cur_y < ya_bas - 3:
+            ens_ammo.add(cur_y)
+            ens_liq.add(cur_y + 3)
+            cur_y += 7
     else:
         cur_y = by_min + 5
         while cur_y < by_max - 3:
@@ -438,17 +412,6 @@ def _lignes_couloirs_internes(cadre_z: Tuple[int, int, int, int], larg_g: int,
             cur_y += 5
 
     return ens_ammo, ens_liq
-
-
-def _zone_interieure_tourelles(cadre_z: Tuple[int, int, int, int], larg_g: int,
-                               haut_g: int, mode_liq: bool = False) -> Tuple[int, int, int, int]:
-    bx_min, bx_max, by_min, by_max = cadre_z
-    if min(larg_g, haut_g) >= 14:
-        pad_g = 3 if mode_liq else 1
-        pad_d = 4 if mode_liq else 2
-        return (bx_min + pad_g, bx_max - pad_d, by_min + 1, by_max - 1)
-    return (bx_min + 1, max(bx_min + 2, bx_max - 1), by_min + 1, max(by_min + 2, by_max - 1))
-
 
 def placer_soin_minimal_avant(plan_g: Grille, liste_soin: list,
                               cadre_z: Tuple[int, int, int, int], larg_g: int,
@@ -511,7 +474,7 @@ def placer_soin_minimal_avant(plan_g: Grille, liste_soin: list,
 
         if opt_proto is None:
             break
-        nouv_s = deepcopy(opt_proto)
+        nouv_s = opt_proto.cloner()
         pos_x, pos_y = opt_pos
         plan_g.placer(nouv_s, pos_x, pos_y)
         blocs_poses.append(nouv_s)
@@ -519,12 +482,28 @@ def placer_soin_minimal_avant(plan_g: Grille, liste_soin: list,
 
     return blocs_poses
 
+def _zone_interieure_tourelles(cadre_z: Tuple[int, int, int, int], larg_g: int,
+                               haut_g: int, mode_liq: bool = False) -> Tuple[int, int, int, int]:
+    bx_min, bx_max, by_min, by_max = cadre_z
+    if min(larg_g, haut_g) >= 14:
+        pad_g = 5 if mode_liq else 1
+        pad_d = 4 if mode_liq else 2
+        return (bx_min + pad_g, bx_max - pad_d, by_min + 1, by_max - 1)
+    return (bx_min + 1, max(bx_min + 2, bx_max - 1), by_min + 1, max(by_min + 2, by_max - 1))
 
-def _couloir_proche(elem_t: Bloc, pos_y: int, ens_lignes: set) -> int:
-    for lig_c in sorted(ens_lignes):
-        if lig_c == pos_y - 1 or lig_c == pos_y + elem_t.hauteur:
-            return lig_c
-    return -1
+
+@lru_cache(maxsize=128)
+def _offsets_disque(larg_b: int, haut_b: int, rayon: float) -> tuple:
+    pts = []
+    for dy in range(haut_b):
+        for dx in range(larg_b):
+            mil_x = dx + 0.5
+            mil_y = dy + 0.5
+            for tx in range(-int(rayon) - 2, int(rayon) + 3):
+                for ty in range(-int(rayon) - 2, int(rayon) + 3):
+                    if math.hypot(tx - mil_x, ty - mil_y) <= rayon:
+                        pts.append((tx, ty))
+    return tuple(set(pts))
 
 
 def distance_a_cible(elem_t: Bloc, pos_x: int, pos_y: int, lim_cible_y: int) -> float:
@@ -543,6 +522,8 @@ def selectionner_top_2_munitions(liste_t: list, ens_ammo: set, lim_cible_y: int,
     for obj_t in liste_t:
         for nom_a, v_dps in (obj_t.ammo_dps or {}).items():
             if nom_a == "power" or (ens_ammo and nom_a not in ens_ammo):
+                continue
+            if nom_a in ("copper", "lead") and len(ens_ammo) > 2 and not any(a in ens_ammo for a in ("surge-alloy", "thorium", "plastanium")):
                 continue
             ratio_d = float(v_dps) / obj_t.taille()
             if ratio_d > val_poly[nom_a]:
@@ -564,7 +545,7 @@ def selectionner_top_2_munitions(liste_t: list, ens_ammo: set, lim_cible_y: int,
     ens_duo = set(duo_ammo)
     retenues = []
     for obj_t in liste_t:
-        copie_t = deepcopy(obj_t)
+        copie_t = obj_t.cloner()
         if copie_t.ammo_type == "power" or "power" in copie_t.ammo_dps:
             copie_t.best_ammo = "power"
             retenues.append(copie_t)
@@ -579,7 +560,30 @@ def selectionner_top_2_munitions(liste_t: list, ens_ammo: set, lim_cible_y: int,
             copie_t.dps_par_cout = copie_t.dps_reel / copie_t.cout_total()
             retenues.append(copie_t)
     return duo_ammo, retenues
+    
+def _couloir_proche(elem_t: Bloc, pos_y: int, ens_lignes: set) -> int:
+    for lig_c in sorted(ens_lignes):
+        if lig_c == pos_y - 1 or lig_c == pos_y + elem_t.hauteur:
+            return lig_c
+    return -1
 
+
+def _couloir_a_besoin_ammo(plan_g: Grille, lig_y: int, bx_min: int, bx_max: int,
+                           duo_ammo: List[str] = None) -> str:
+    touche_st = False
+    for px in range(bx_min + 1, bx_max - 1):
+        for adj_y in (lig_y - 1, lig_y + 1):
+            if 0 <= adj_y < plan_g.hauteur:
+                occ = plan_g.cellules[adj_y][px]
+                if occ is not None:
+                    if occ.type == "turret" and occ.best_ammo and occ.best_ammo != "power":
+                        return occ.best_ammo
+                    if occ.kind in ("storage", "storage_io"):
+                        touche_st = True
+    if touche_st and duo_ammo:
+        return next(iter(duo_ammo), "")
+    return ""
+    
 def _preplacer_foreshadow_et_aa(plan_g: Grille, liste_t: list, bornes_i: Tuple[int, int, int, int],
                                 ens_ammo: set, ens_liq: set, lim_cible_y: int,
                                 quota_aa: float, map_ammo_yc: dict, liste_posees: list):
@@ -587,7 +591,7 @@ def _preplacer_foreshadow_et_aa(plan_g: Grille, liste_t: list, bornes_i: Tuple[i
     aire_u = max(10, (ix_d - ix_g) * (iy_b - iy_h - len(ens_ammo) - len(ens_liq)))
     nb_estime = max(10, int(aire_u / 8.5))
     plafond_par = max(1, int(0.10 * nb_estime))
-    plafond_pre = max(1, int(0.05 * nb_estime))
+    plafond_pre = max(1, int(0.04 * nb_estime))
     obj_par = min(plafond_par, max(1, int(round(0.06 * nb_estime))))
 
     proto_pre = next((t for t in liste_t if t.id == "foreshadow"), None)
@@ -606,7 +610,7 @@ def _preplacer_foreshadow_et_aa(plan_g: Grille, liste_t: list, bornes_i: Tuple[i
                 if cpt_pre >= plafond_pre:
                     break
                 if plan_g.peut_placer(proto_pre, px, py):
-                    inst_f = deepcopy(proto_pre)
+                    inst_f = proto_pre.cloner(x=px, y=py)
                     plan_g.placer(inst_f, px, py)
                     liste_posees.append(inst_f)
                     map_ammo_yc[yc_adj] = inst_f.best_ammo
@@ -641,7 +645,7 @@ def _preplacer_foreshadow_et_aa(plan_g: Grille, liste_t: list, bornes_i: Tuple[i
             if opt_coord is None or (deja_aa and opt_eloign < 4.0):
                 break
             cx, cy = opt_coord
-            inst_a = deepcopy(proto_par)
+            inst_a = proto_par.cloner(x=cx, y=cy)
             plan_g.placer(inst_a, cx, cy)
             liste_posees.append(inst_a)
             deja_aa.append(inst_a)
@@ -713,7 +717,7 @@ def remplir_glouton_stratifie(plan_g: Grille, liste_t: list, cadre_z: Tuple[int,
                     if _couloir_proche(proto_t, py, ens_liq) == -1 and not (px == ix_g or px + proto_t.largeur == ix_d):
                         continue
                 if plan_g.peut_placer(proto_t, px, py):
-                    inst_t = deepcopy(proto_t)
+                    inst_t = proto_t.cloner(x=px, y=py)
                     plan_g.placer(inst_t, px, py)
                     liste_posees.append(inst_t)
                     if yc_adj != -1 and inst_t.best_ammo and inst_t.best_ammo != "power":
@@ -724,94 +728,6 @@ def remplir_glouton_stratifie(plan_g: Grille, liste_t: list, cadre_z: Tuple[int,
         if plan_g.cellules[ry][rx] is marqueur_res:
             plan_g.cellules[ry][rx] = None
     return liste_posees
-
-def _placer_boucliers_et_accelerants(plan_g: Grille, liste_posees: list, liste_soin: list,
-                                     cadre_z: Tuple[int, int, int, int], larg_g: int, haut_g: int,
-                                     lim_cible_y: int, mode_liq: bool, pas_force: int = 0) -> list:
-    if len(liste_posees) <= 25:
-        return []
-    ix_g, ix_d, iy_h, iy_b = _zone_interieure_tourelles(cadre_z, larg_g, haut_g, mode_liq)
-    ens_ammo, ens_liq = _lignes_couloirs_internes(cadre_z, larg_g, haut_g, mode_liq, pas_force)
-    ajouts_soin = []
-
-    dispo_boucliers = [s for s in liste_soin if s.kind == "shield" or s.id == "force-projector"]
-    if dispo_boucliers and larg_g > 20 and haut_g > 20:
-        proto_sh = next(iter(dispo_boucliers))
-        larg_s, haut_s, ray_s = proto_sh.largeur, proto_sh.hauteur, proto_sh.portee
-        ens_prot = set()
-        while len(ens_prot) < math.ceil(0.85 * len(liste_posees)) and len(liste_posees) > 25:
-            opt_coord = None
-            opt_val = 0.0
-            for py in range(iy_h, iy_b - haut_s + 1):
-                if any((py + dy) in ens_ammo or (py + dy) in ens_liq for dy in range(haut_s)):
-                    continue
-                if mode_liq and ens_liq and _couloir_proche(proto_sh, py, ens_liq) == -1:
-                    continue
-                for px in range(ix_g, ix_d - larg_s + 1, 2):
-                    if any(plan_g.cellules[py + dy][px + dx] is not None and plan_g.cellules[py + dy][px + dx].type != "turret" for dy in range(haut_s) for dx in range(larg_s)):
-                        continue
-                    mil_x = px + larg_s / 2.0
-                    mil_y = py + haut_s / 2.0
-                    loc_cov = set()
-                    for t_cur in liste_posees:
-                        if math.hypot((t_cur.x + t_cur.largeur / 2.0) - mil_x, (t_cur.y + t_cur.hauteur / 2.0) - mil_y) <= ray_s:
-                            loc_cov.add(id(t_cur))
-                    val_loc = sum(100.0 / (t_cur.y + 5.0) for t_cur in liste_posees if id(t_cur) in (loc_cov - ens_prot))
-                    if val_loc > opt_val:
-                        opt_val = val_loc
-                        opt_coord = (px, py)
-            if opt_coord is None or opt_val <= 0:
-                break
-            cx, cy = opt_coord
-            plan_g.liberer_zone(cx, cy, larg_s, haut_s, liste_posees)
-            inst_sh = deepcopy(proto_sh)
-            plan_g.placer(inst_sh, cx, cy)
-            ajouts_soin.append(inst_sh)
-            for t_cur in liste_posees:
-                if math.hypot((t_cur.x + t_cur.largeur / 2.0) - (cx + larg_s / 2.0), (t_cur.y + t_cur.hauteur / 2.0) - (cy + haut_s / 2.0)) <= ray_s:
-                    ens_prot.add(id(t_cur))
-
-    dispo_od = sorted([s for s in liste_soin if s.kind == "overdrive" or "overdrive" in s.id], key=lambda s: -s.speed_boost)
-    if dispo_od and larg_g > 14 and haut_g > 14 and len(liste_posees) > 25:
-        proto_od = next(iter(dispo_od))
-        larg_o, haut_o, ray_o = proto_od.largeur, proto_od.hauteur, proto_od.portee
-        fact_mult = proto_od.speed_boost - 1.0
-        ens_boost = set()
-        while len(ens_boost) < math.ceil(0.80 * len(liste_posees)) and len(liste_posees) > 25:
-            opt_coord = None
-            opt_gain = 0.0
-            opt_cov = set()
-            for py in range(iy_h, iy_b - haut_o + 1):
-                if any((py + dy) in ens_ammo or (py + dy) in ens_liq for dy in range(haut_o)):
-                    continue
-                touche_liq = (_couloir_proche(proto_od, py, ens_liq) != -1)
-                for px in range(ix_g, ix_d - larg_o + 1, 2):
-                    if any(plan_g.cellules[py + dy][px + dx] is not None and plan_g.cellules[py + dy][px + dx].type != "turret" for dy in range(haut_o) for dx in range(larg_o)):
-                        continue
-                    mil_x = px + larg_o / 2.0
-                    mil_y = py + haut_o / 2.0
-                    ecrasees = [t_cur for t_cur in liste_posees if not (t_cur.x + t_cur.largeur <= px or t_cur.x >= px + larg_o or t_cur.y + t_cur.hauteur <= py or t_cur.y >= py + haut_o)]
-                    loc_cov = set()
-                    for t_cur in liste_posees:
-                        if t_cur not in ecrasees and math.hypot((t_cur.x + t_cur.largeur / 2.0) - mil_x, (t_cur.y + t_cur.hauteur / 2.0) - mil_y) <= ray_o:
-                            loc_cov.add(id(t_cur))
-                    gain_net = sum(t_cur.dps_reel * fact_mult for t_cur in liste_posees if id(t_cur) in (loc_cov - ens_boost) and peut_couvrir_cible(t_cur, t_cur.x, t_cur.y, lim_cible_y)) - sum(t_cur.dps_reel for t_cur in ecrasees)
-                    if touche_liq:
-                        gain_net += 35.0
-                    if gain_net > opt_gain:
-                        opt_gain = gain_net
-                        opt_coord = (px, py)
-                        opt_cov = loc_cov
-            if opt_coord is None or opt_gain <= 50.0:
-                break
-            cx, cy = opt_coord
-            plan_g.liberer_zone(cx, cy, larg_o, haut_o, liste_posees)
-            inst_od = deepcopy(proto_od)
-            plan_g.placer(inst_od, cx, cy)
-            ajouts_soin.append(inst_od)
-            ens_boost.update(opt_cov)
-    return ajouts_soin
-
 
 def phase3_optimisation_dps(plan_g: Grille, liste_t: list, liste_soin: list,
                             cadre_z: Tuple[int, int, int, int], larg_g: int,
@@ -855,6 +771,7 @@ def phase3_optimisation_dps(plan_g: Grille, liste_t: list, liste_soin: list,
     plan_opt, t_retenues, dps_final = meilleur_etat
     plan_g.cellules = plan_opt.cellules
     return plan_g, t_retenues, t_filtrees, duo_ammo, dps_final
+
 
 def _placer_tampons_crise(plan_g: Grille, liste_posees: list, cadre_z: Tuple[int, int, int, int],
                           ens_ammo: set, ens_liq: set, liste_log: list,
@@ -937,40 +854,30 @@ def _placer_tampons_crise(plan_g: Grille, liste_posees: list, cadre_z: Tuple[int
         x_droite_lib = (tx + larg_l) if (mode_liq and bloc_lq) else (vx + larg_i)
         plan_g.liberer_zone(col_r, y_haut_lib, x_droite_lib - col_r, y_bas_lib - y_haut_lib, liste_posees)
 
-        inst_it = deepcopy(bloc_it)
-        inst_it.kind = "storage"
+        inst_it = bloc_it.cloner(x=vx, y=vy, kind="storage")
         plan_g.placer(inst_it, vx, vy)
         ajouts_st.append(inst_it)
 
         if mode_liq and bloc_lq:
-            inst_lq = deepcopy(bloc_lq)
-            inst_lq.kind = "storage"
+            inst_lq = bloc_lq.cloner(x=tx, y=ty, kind="storage")
             plan_g.placer(inst_lq, tx, ty)
             ajouts_st.append(inst_lq)
             if yl_ref != -1 and pr_lrt and pr_cond:
                 tx_io = tx if (lim_pont_d - (tx + 1) + 1) % 2 == 0 else tx + 1
                 if plan_g.cellules[yl_ref][tx_io] is None and plan_g.cellules[yl_ref][tx_io - 1] is None:
                     sens_lq = 0 if yl_ref == max(ens_liq) else 2
-                    b_lrt = deepcopy(pr_lrt)
-                    b_lrt.kind = "storage_io"
-                    b_lrt.rotation = sens_lq
+                    b_lrt = pr_lrt.cloner(x=tx_io, y=yl_ref, rotation=sens_lq, kind="storage_io")
                     plan_g.placer(b_lrt, tx_io, yl_ref)
                     ajouts_st.append(b_lrt)
-                    b_lcd = deepcopy(pr_cond)
-                    b_lcd.kind = "storage_io"
-                    b_lcd.rotation = sens_lq
+                    b_lcd = pr_cond.cloner(x=tx_io - 1, y=yl_ref, rotation=sens_lq, kind="storage_io")
                     plan_g.placer(b_lcd, tx_io - 1, yl_ref)
                     ajouts_st.append(b_lcd)
 
         if pr_ov and pr_conv and plan_g.cellules[yc_ref][vx + 1] is None and plan_g.cellules[yc_ref][vx] is None:
-            b_ov = deepcopy(pr_ov)
-            b_ov.kind = "storage_io"
-            b_ov.rotation = 2
+            b_ov = pr_ov.cloner(x=vx + 1, y=yc_ref, rotation=2, kind="storage_io")
             plan_g.placer(b_ov, vx + 1, yc_ref)
             ajouts_st.append(b_ov)
-            b_cin = deepcopy(pr_conv)
-            b_cin.kind = "storage_io"
-            b_cin.rotation = 2
+            b_cin = pr_conv.cloner(x=vx, y=yc_ref, rotation=2, kind="storage_io")
             plan_g.placer(b_cin, vx, yc_ref)
             ajouts_st.append(b_cin)
 
@@ -978,23 +885,16 @@ def _placer_tampons_crise(plan_g: Grille, liste_posees: list, cadre_z: Tuple[int
             pr_jonc = pr_rt if pr_rt else pr_conv
             for cx_io in (col_u, col_r):
                 if plan_g.cellules[yc_ref][cx_io] is None:
-                    b_ct = deepcopy(pr_jonc if cx_io == col_u else pr_conv)
-                    b_ct.kind = "storage_io"
-                    b_ct.rotation = 2
+                    b_ct = (pr_jonc if cx_io == col_u else pr_conv).cloner(x=cx_io, y=yc_ref, rotation=2, kind="storage_io")
                     plan_g.placer(b_ct, cx_io, yc_ref)
                     ajouts_st.append(b_ct)
             for idx_a, nom_cfg in enumerate(islice(duo_ammo, 0, min(2, haut_i))):
-                b_un = deepcopy(pr_unl)
-                b_un.kind = "storage_io"
-                b_un.rotation = 1
-                b_un.best_ammo = nom_cfg
+                b_un = pr_unl.cloner(x=col_u, y=vy + idx_a, rotation=1 if vy > yc_ref else 3, best_ammo=nom_cfg, kind="storage_io")
                 plan_g.placer(b_un, col_u, vy + idx_a)
                 ajouts_st.append(b_un)
                 if idx_a == 1:
                     for ry_c in (vy + 1, vy):
-                        b_cv = deepcopy(pr_conv)
-                        b_cv.kind = "storage_io"
-                        b_cv.rotation = 1
+                        b_cv = pr_conv.cloner(x=col_r, y=ry_c, rotation=1 if vy > yc_ref else 3, kind="storage_io")
                         plan_g.placer(b_cv, col_r, ry_c)
                         ajouts_st.append(b_cv)
     return ajouts_st, yc_avec_st
@@ -1035,6 +935,7 @@ def _choisir_distributeurs(ens_blocs: list, role_base: str):
     b_pont = next(iter(l_ponts), None)
     return b_princ, b_tri, b_rep, b_rout, b_pont
 
+
 def _densifier_par_ponts(plan_g: Grille, ens_lignes: set, x_start: int, x_end: int,
                          pr_pont: Bloc, registre: list):
     if pr_pont is None or x_start >= x_end:
@@ -1058,9 +959,7 @@ def _densifier_par_ponts(plan_g: Grille, ens_lignes: set, x_start: int, x_end: i
                         registre.remove(b1)
                     if b2 in registre:
                         registre.remove(b2)
-                    pa, pb = deepcopy(pr_pont), deepcopy(pr_pont)
-                    pa.rotation = 2
-                    pb.rotation = 2
+                    pa, pb = pr_pont.cloner(rotation=2), pr_pont.cloner(rotation=2)
                     plan_g.placer(pa, cur_x, lig_y)
                     plan_g.placer(pb, cur_x - 1, lig_y)
                     registre.extend([pa, pb])
@@ -1079,9 +978,7 @@ def _densifier_par_ponts(plan_g: Grille, ens_lignes: set, x_start: int, x_end: i
                         registre.remove(b1)
                     if b2 in registre:
                         registre.remove(b2)
-                    pa, pb = deepcopy(pr_pont), deepcopy(pr_pont)
-                    pa.rotation = 0
-                    pb.rotation = 0
+                    pa, pb = pr_pont.cloner(rotation=0), pr_pont.cloner(rotation=0)
                     plan_g.placer(pa, cur_x, lig_y)
                     plan_g.placer(pb, cur_x + 1, lig_y)
                     registre.extend([pa, pb])
@@ -1106,9 +1003,7 @@ def _densifier_colonnes_par_ponts(plan_g: Grille, liste_cols: list, y_start: int
                     registre.remove(b1)
                 if b2 in registre:
                     registre.remove(b2)
-                pa, pb = deepcopy(pr_pont), deepcopy(pr_pont)
-                pa.rotation = 3
-                pb.rotation = 3
+                pa, pb = pr_pont.cloner(rotation=3), pr_pont.cloner(rotation=3)
                 plan_g.placer(pa, col_x, cur_y)
                 plan_g.placer(pb, col_x, cur_y + 1)
                 registre.extend([pa, pb])
@@ -1158,12 +1053,12 @@ def _placer_batteries_4s(plan_g: Grille, liste_en: list, cadre_z: Tuple[int, int
                         if not mode_ecrase or any(plan_g.cellules[py + dy][px + dx] is not None and (plan_g.cellules[py + dy][px + dx].type != "turret" or plan_g.cellules[py + dy][px + dx].targets_air) for dy in range(haut_b) for dx in range(larg_b)):
                             continue
                         plan_g.liberer_zone(px, py, larg_b, haut_b, liste_posees)
-                    inst_b = deepcopy(pr_bat)
-                    inst_b.kind = "battery"
+                    inst_b = pr_bat.cloner(x=px, y=py, kind="battery")
                     plan_g.placer(inst_b, px, py)
                     ajouts_b.append(inst_b)
                     reserve_act += inst_b.energy_stored
     return ajouts_b
+
 
 def _placer_energie_connectee(plan_g: Grille, liste_en: list,
                               cadre_z: Tuple[int, int, int, int], liste_posees: list,
@@ -1188,13 +1083,12 @@ def _placer_energie_connectee(plan_g: Grille, liste_en: list,
                     continue
                 for pr_t1 in dispo_t1:
                     if pr_t1.best_ammo == "power" and peut_couvrir_cible(pr_t1, rx, ry, lim_cible_y) and plan_g.peut_placer(pr_t1, rx, ry):
-                        inst_t1 = deepcopy(pr_t1)
+                        inst_t1 = pr_t1.cloner(x=rx, y=ry)
                         plan_g.placer(inst_t1, rx, ry)
                         liste_posees.append(inst_t1)
                         break
                 if plan_g.cellules[ry][rx] is None and pr_bat1 and plan_g.peut_placer(pr_bat1, rx, ry):
-                    inst_b1 = deepcopy(pr_bat1)
-                    inst_b1.kind = "battery"
+                    inst_b1 = pr_bat1.cloner(x=rx, y=ry, kind="battery")
                     plan_g.placer(inst_b1, rx, ry)
                     ajouts_n.append(inst_b1)
 
@@ -1205,8 +1099,7 @@ def _placer_energie_connectee(plan_g: Grille, liste_en: list,
         if any((py + dy) in lig_exclues for dy in range(haut_n)) or any((px + dx) in cols_excl for dx in range(larg_n)):
             return None
         if plan_g.peut_placer(pr_n, px, py):
-            inst_n = deepcopy(pr_n)
-            inst_n.kind = "node"
+            inst_n = pr_n.cloner(x=px, y=py, kind="node")
             plan_g.placer(inst_n, px, py)
             return inst_n
         if niv_ecrase >= 1:
@@ -1226,8 +1119,7 @@ def _placer_energie_connectee(plan_g: Grille, liste_en: list,
                 plan_g.retirer(v)
                 if v in liste_posees:
                     liste_posees.remove(v)
-            inst_n = deepcopy(pr_n)
-            inst_n.kind = "node"
+            inst_n = pr_n.cloner(x=px, y=py, kind="node")
             plan_g.placer(inst_n, px, py)
             for zx, zy, zw, zh in zones_lib:
                 combler_trou_1x1(zx, zy, zw, zh)
@@ -1359,6 +1251,7 @@ def _placer_energie_connectee(plan_g: Grille, liste_en: list,
             break
     return ajouts_n
 
+
 def _tracer_peignes_logistiques(plan_g: Grille, cadre_z: Tuple[int, int, int, int], mode_liq: bool,
                                 ens_liq: set, yc_actifs: set, yc_stock: set,
                                 map_ammo_yc: dict, duo_ammo: List[str], pr_conv: Bloc,
@@ -1369,7 +1262,7 @@ def _tracer_peignes_logistiques(plan_g: Grille, cadre_z: Tuple[int, int, int, in
     if mode_liq and ens_liq:
         yl_bas = max(ens_liq)
         yl_haut = min(ens_liq)
-        col_lq_g = bx_min + 2
+        col_lq_g = bx_min + 4
         col_lq_d = bx_max - 4
         for py in range(yl_bas, yl_haut - 1, -1):
             besoin_r = (py in (ens_liq - {yl_bas}) or plan_g.cellules[py][col_lq_d + 1] is not None)
@@ -1401,11 +1294,11 @@ def _tracer_peignes_logistiques(plan_g: Grille, cadre_z: Tuple[int, int, int, in
                 fn_pose(bx_max - 2, lig_a, pr_tri if doit_filtrer else pr_conv, 2, cfg_tri, "storage_io")
                 fn_pose(bx_max - 3, lig_a, pr_pont, 2, "", "bridge_io")
                 fn_pose(bx_max - 5, lig_a, pr_pont, 2, "", "bridge_io")
-                for px in range(bx_max - 6, bx_min + 3, -1):
+                for px in range(bx_max - 6, bx_min + 5, -1):
                     fn_pose(px, lig_a, pr_conv, 2)
+                fn_pose(bx_min + 5, lig_a, pr_pont, 2, "", "bridge_io")
                 fn_pose(bx_min + 3, lig_a, pr_pont, 2, "", "bridge_io")
-                fn_pose(bx_min + 1, lig_a, pr_pont, 2, "", "bridge_io")
-                _densifier_par_ponts(plan_g, {lig_a}, bx_min + 4, bx_max - 6, pr_pont, registre_infra)
+                _densifier_par_ponts(plan_g, {lig_a}, bx_min + 6, bx_max - 6, pr_pont, registre_infra)
             else:
                 for px in range(bx_max - 2, bx_min, -1):
                     fn_pose(px, lig_a, pr_conv, 2)
@@ -1415,6 +1308,7 @@ def _tracer_peignes_logistiques(plan_g: Grille, cadre_z: Tuple[int, int, int, in
 
         _densifier_par_ponts(plan_g, {by_max - 1}, bx_min + 1, bx_max - 2, pr_pont, registre_infra)
         _densifier_colonnes_par_ponts(plan_g, [bx_min], by_min + 1, by_max - 2, pr_pont, registre_infra)
+
 
 def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
                           liste_soin: list, liste_log: list, liste_liq: list,
@@ -1445,11 +1339,7 @@ def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
             if occ in registre_infra:
                 registre_infra.remove(occ)
             plan_g.retirer(occ)
-        inst_b = deepcopy(pr_b)
-        inst_b.rotation = dir_r
-        inst_b.best_ammo = val_cfg
-        if role_f:
-            inst_b.kind = role_f
+        inst_b = pr_b.cloner(x=px, y=py, rotation=dir_r, best_ammo=val_cfg, kind=role_f if role_f else pr_b.kind)
         plan_g.placer(inst_b, px, py)
         registre_infra.append(inst_b)
 
@@ -1459,6 +1349,9 @@ def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
     )
     registre_infra += blocs_st
     placer_soin_minimal_avant(plan_g, liste_soin, cadre_z, larg_g, haut_g, sans_mur, mode_liq)
+
+    routs_droite = [py for py in range(by_max - 1, by_min, -1) if plan_g.cellules[py][bx_max - 1] is not None and plan_g.cellules[py][bx_max - 1].id in ("router", "liquid-router")]
+    y_echap = routs_droite[1] if len(routs_droite) >= 2 else (by_max - 4)
 
     if haut_g > by_max and pr_pont and pr_conv:
         poser_elem(bx_max - 2, haut_g - 1, pr_pont, 1, "", "bridge_io")
@@ -1473,8 +1366,9 @@ def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
         if ((col_echap - 2) - (bx_min + 1) + 1) % 2 != 0:
             col_echap -= 1
         if col_echap > bx_min + 3 and pr_ov:
-            poser_elem(col_echap - 1, by_max - 1, pr_conv, 0, "", "bridge_io")
-            poser_elem(col_echap, by_max - 1, pr_ov, 0, "", "bridge_io")
+            poser_elem(bx_max - 1, y_echap, pr_ov, 1, "", "bridge_io")
+            poser_elem(bx_max, y_echap, pr_pont, 0, "", "bridge_io")
+            poser_elem(larg_g - 1, y_echap, pr_pont, 0, "", "bridge_io")
             if haut_g - 1 > by_max:
                 poser_elem(col_echap, by_max, pr_pont, 3, "", "bridge_io")
                 poser_elem(col_echap, haut_g - 1, pr_pont, 3, "", "bridge_io")
@@ -1519,7 +1413,7 @@ def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
             for pr_t in seq_t:
                 if pr_t.id == "parallax" and nb_par >= max(1, int(0.10 * tot_t)):
                     continue
-                if pr_t.id == "foreshadow" and nb_pre >= max(1, int(0.05 * tot_t)):
+                if pr_t.id == "foreshadow" and nb_pre >= max(1, int(0.04 * tot_t)):
                     continue
                 if not pr_t.targets_ground and pr_t.id != "parallax" and (nb_aa / tot_t) >= 0.20:
                     continue
@@ -1536,7 +1430,7 @@ def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
                     if yc_adj == -1 or (yc_adj not in yc_stock and yc_adj in map_ammo_yc and map_ammo_yc[yc_adj] != pr_t.best_ammo):
                         continue
                 if plan_g.peut_placer(pr_t, px, py):
-                    inst_t = deepcopy(pr_t)
+                    inst_t = pr_t.cloner(x=px, y=py)
                     plan_g.placer(inst_t, px, py)
                     liste_posees.append(inst_t)
                     break
@@ -1552,39 +1446,399 @@ def phase4_infrastructure(plan_g: Grille, liste_posees: list, dispo_t: list,
     )
     return registre_infra, pr_conv
 
-def _resoudre_nom_item_msch(cfg_brut: str) -> str:
-    if not cfg_brut:
-        return ""
-    table_alias = {
-        "surge-alloy": ("surge_alloy", "surge", "surge-alloy", "surgealloy", "SurgeAlloy"),
-        "phase-fabric": ("phase_fabric", "phase", "phase-fabric", "phasefabric", "PhaseFabric"),
-        "blast-compound": ("blast_compound", "blast", "blast-compound", "blastcompound"),
-        "spore-pod": ("spore_pod", "spore", "spore-pod", "sporepod"),
+def _placer_boucliers_et_accelerants(plan_g: Grille, liste_posees: list, liste_soin: list,
+                                     cadre_z: Tuple[int, int, int, int], larg_g: int, haut_g: int,
+                                     lim_cible_y: int, mode_liq: bool, pas_force: int = 0) -> list:
+    if len(liste_posees) <= 25:
+        return []
+    ix_g, ix_d, iy_h, iy_b = _zone_interieure_tourelles(cadre_z, larg_g, haut_g, mode_liq)
+    ens_ammo, ens_liq = _lignes_couloirs_internes(cadre_z, larg_g, haut_g, mode_liq, pas_force)
+    ajouts_soin = []
+
+    dispo_boucliers = [s for s in liste_soin if s.kind == "shield" or s.id == "force-projector"]
+    if dispo_boucliers and larg_g > 20 and haut_g > 20:
+        proto_sh = next(iter(dispo_boucliers))
+        larg_s, haut_s, ray_s = proto_sh.largeur, proto_sh.hauteur, proto_sh.portee
+        ens_prot = set()
+        while len(ens_prot) < math.ceil(0.85 * len(liste_posees)) and len(liste_posees) > 25:
+            opt_coord = None
+            opt_val = 0.0
+            for py in range(iy_h, iy_b - haut_s + 1):
+                if any((py + dy) in ens_ammo or (py + dy) in ens_liq for dy in range(haut_s)):
+                    continue
+                if mode_liq and ens_liq and _couloir_proche(proto_sh, py, ens_liq) == -1:
+                    continue
+                for px in range(ix_g, ix_d - larg_s + 1, 2):
+                    if any(plan_g.cellules[py + dy][px + dx] is not None and plan_g.cellules[py + dy][px + dx].type != "turret" for dy in range(haut_s) for dx in range(larg_s)):
+                        continue
+                    mil_x = px + larg_s / 2.0
+                    mil_y = py + haut_s / 2.0
+                    loc_cov = set()
+                    for t_cur in liste_posees:
+                        if math.hypot((t_cur.x + t_cur.largeur / 2.0) - mil_x, (t_cur.y + t_cur.hauteur / 2.0) - mil_y) <= ray_s:
+                            loc_cov.add(id(t_cur))
+                    val_loc = sum(100.0 / (t_cur.y + 5.0) for t_cur in liste_posees if id(t_cur) in (loc_cov - ens_prot))
+                    if val_loc > opt_val:
+                        opt_val = val_loc
+                        opt_coord = (px, py)
+            if opt_coord is None or opt_val <= 0:
+                break
+            cx, cy = opt_coord
+            plan_g.liberer_zone(cx, cy, larg_s, haut_s, liste_posees)
+            inst_sh = proto_sh.cloner(x=cx, y=cy)
+            plan_g.placer(inst_sh, cx, cy)
+            ajouts_soin.append(inst_sh)
+            for t_cur in liste_posees:
+                if math.hypot((t_cur.x + t_cur.largeur / 2.0) - (cx + larg_s / 2.0), (t_cur.y + t_cur.hauteur / 2.0) - (cy + haut_s / 2.0)) <= ray_s:
+                    ens_prot.add(id(t_cur))
+
+    dispo_od = sorted([s for s in liste_soin if s.kind == "overdrive" or "overdrive" in s.id], key=lambda s: -s.speed_boost)
+    if dispo_od and larg_g > 14 and haut_g > 14 and len(liste_posees) > 25:
+        proto_od = next(iter(dispo_od))
+        larg_o, haut_o, ray_o = proto_od.largeur, proto_od.hauteur, proto_od.portee
+        fact_mult = proto_od.speed_boost - 1.0
+        ens_boost = set()
+        while len(ens_boost) < math.ceil(0.80 * len(liste_posees)) and len(liste_posees) > 25:
+            opt_coord = None
+            opt_gain = 0.0
+            opt_cov = set()
+            for py in range(iy_h, iy_b - haut_o + 1):
+                if any((py + dy) in ens_ammo or (py + dy) in ens_liq for dy in range(haut_o)):
+                    continue
+                touche_liq = (_couloir_proche(proto_od, py, ens_liq) != -1)
+                for px in range(ix_g, ix_d - larg_o + 1, 2):
+                    if any(plan_g.cellules[py + dy][px + dx] is not None and plan_g.cellules[py + dy][px + dx].type != "turret" for dy in range(haut_o) for dx in range(larg_o)):
+                        continue
+                    mil_x = px + larg_o / 2.0
+                    mil_y = py + haut_o / 2.0
+                    ecrasees = [t_cur for t_cur in liste_posees if not (t_cur.x + t_cur.largeur <= px or t_cur.x >= px + larg_o or t_cur.y + t_cur.hauteur <= py or t_cur.y >= py + haut_o)]
+                    loc_cov = set()
+                    for t_cur in liste_posees:
+                        if t_cur not in ecrasees and math.hypot((t_cur.x + t_cur.largeur / 2.0) - mil_x, (t_cur.y + t_cur.hauteur / 2.0) - mil_y) <= ray_o:
+                            loc_cov.add(id(t_cur))
+                    gain_net = sum(t_cur.dps_reel * fact_mult for t_cur in liste_posees if id(t_cur) in (loc_cov - ens_boost) and peut_couvrir_cible(t_cur, t_cur.x, t_cur.y, lim_cible_y)) - sum(t_cur.dps_reel for t_cur in ecrasees)
+                    if touche_liq:
+                        gain_net += 35.0
+                    if gain_net > opt_gain:
+                        opt_gain = gain_net
+                        opt_coord = (px, py)
+                        opt_cov = loc_cov
+            if opt_coord is None or opt_gain <= 50.0:
+                break
+            cx, cy = opt_coord
+            plan_g.liberer_zone(cx, cy, larg_o, haut_o, liste_posees)
+            inst_od = proto_od.cloner(x=cx, y=cy)
+            plan_g.placer(inst_od, cx, cy)
+            ajouts_soin.append(inst_od)
+            ens_boost.update(opt_cov)
+    return ajouts_soin
+    
+def _cle_signature_cerveau(larg_g: int, haut_g: int, ens_mat: set, ens_cap: set,
+                           ens_ammo: set, sans_mur: bool, quota_aa: float) -> str:
+    str_mat = ",".join(sorted(ens_mat | ens_cap))
+    str_am = ",".join(sorted(ens_ammo)) if ens_ammo else "all"
+    str_m = "nowall" if sans_mur else "wall"
+    return f"{larg_g}x{haut_g}|{str_mat}|{str_am}|{str_m}|aa{int(round(quota_aa * 100))}"
+
+
+def _charger_cerveau(chemin_cerveau: str) -> dict:
+    defaut_c = {
+        "version": "12.0-axioms-mp",
+        "total_episodes": 0,
+        "universal_episodes": 0,
+        "neural_policy": {
+            "pas_weights": {"0": [0.6, 0.5, 0.4], "4": [0.2, 0.3, 0.1], "5": [0.1, 0.2, 0.3]},
+            "taille_weights": {"0": [0.4, 0.2, 0.3], "1": [0.5, 0.4, 0.5]},
+            "ammo_synergy": {},
+        },
+        "hall_of_fame": {},
     }
-    if cfg_brut not in table_alias:
-        return cfg_brut
-
-    variantes = table_alias.get(cfg_brut)
-    rep_app = os.environ.get("APPDATA", "")
-    rep_build = os.path.join(rep_app, "npm", "node_modules", "msch-generate", "build")
-    if os.path.isdir(rep_build):
-        code_js = ""
-        for nom_f in os.listdir(rep_build):
-            if nom_f.endswith(".js"):
-                try:
-                    with open(os.path.join(rep_build, nom_f), "r", encoding="utf-8", errors="ignore") as flux_j:
-                        code_js += flux_j.read() + "\n"
-                except OSError:
-                    pass
-        for var_c in variantes:
-            if f'"{var_c}"' in code_js or f"'{var_c}'" in code_js or f"{var_c}:" in code_js:
-                return var_c
-        for repli in ("thorium", "plastanium", "titanium", "silicon", "graphite", "copper"):
-            if f'"{repli}"' in code_js or f"'{repli}'" in code_js or f"{repli}:" in code_js:
-                return repli
-    return next(iter(variantes))
+    if not os.path.isfile(chemin_cerveau):
+        return defaut_c
+    try:
+        with open(chemin_cerveau, "r", encoding="utf-8") as f_in:
+            lu = json.load(f_in)
+            if isinstance(lu, dict) and lu.get("version") == "12.0-axioms-mp":
+                return lu
+    except (OSError, ValueError):
+        pass
+    return defaut_c
 
 
+def _sauvegarder_cerveau_atomique(chemin_cerveau: str, etat_cerveau: dict):
+    chemin_tmp = chemin_cerveau + ".tmp"
+    try:
+        with open(chemin_tmp, "w", encoding="utf-8") as f_tmp:
+            json.dump(etat_cerveau, f_tmp, ensure_ascii=False, indent=2)
+            f_tmp.flush()
+            os.fsync(f_tmp.fileno())
+        os.replace(chemin_tmp, chemin_cerveau)
+    except OSError:
+        pass
+
+
+def _extraire_vecteur_contexte(larg_g: int, haut_g: int, ens_mat: set, ens_cap: set) -> List[float]:
+    v_prof = min(1.0, haut_g / 45.0)
+    v_surf = min(1.0, (larg_g * haut_g) / 2500.0)
+    v_tech = 1.0 if ("surge-alloy" in ens_mat or "thorium" in ens_mat) else 0.3
+    return [1.0, v_prof, v_surf * v_tech]
+
+
+def _predire_genome_neuronal(etat_cerveau: dict, larg_g: int, haut_g: int,
+                             cadre_z: Tuple[int, int, int, int], ens_mat: set,
+                             ens_cap: set, ens_ammo: set, cat_t: list,
+                             exploration: float = 0.0) -> dict:
+    pol = etat_cerveau.get("neural_policy", {})
+    vec_x = _extraire_vecteur_contexte(larg_g, haut_g, ens_mat, ens_cap)
+    mun_dispo = sorted({
+        am for t in cat_t for am in (t.ammo_dps or {}).keys()
+        if am != "power" and (not ens_ammo or am in ens_ammo)
+    })
+    paires_m = list(combinations(mun_dispo, 2)) if len(mun_dispo) >= 2 else [(next(iter(mun_dispo), "copper"),)]
+    syn_map = pol.get("ammo_synergy", {})
+    cle_prof = "deep" if haut_g >= 30 else ("mid" if haut_g >= 18 else "small")
+
+    if random.random() < exploration:
+        paire_sel = list(random.choice(paires_m))
+        pas_sel = random.choice([0, 4, 5])
+        tail_sel = random.choice([0, 1])
+    else:
+        def score_paire(p_cand):
+            cle_p = f"{cle_prof}:{'+'.join(sorted(p_cand))}"
+            bonus_h = 350.0 if (haut_g > 28 and "graphite" in p_cand) else 0.0
+            return float(syn_map.get(cle_p, 0.0)) + bonus_h
+
+        paire_sel = list(max(paires_m, key=score_paire))
+        w_pas = pol.get("pas_weights", {"0": [0.6, 0.5, 0.4], "4": [0.2, 0.3, 0.1], "5": [0.1, 0.2, 0.3]})
+        pas_sel = int(max(["0", "4", "5"], key=lambda k: sum(w * x for w, x in zip(w_pas.get(k, [0, 0, 0]), vec_x))))
+        w_tail = pol.get("taille_weights", {"0": [0.4, 0.2, 0.3], "1": [0.5, 0.4, 0.5]})
+        tail_sel = int(max(["0", "1"], key=lambda k: sum(w * x for w, x in zip(w_tail.get(k, [0, 0, 0]), vec_x))))
+
+    ens_a_tmp, _ = _lignes_couloirs_internes(cadre_z, larg_g, haut_g, "liquids" in ens_cap, pas_sel)
+    _, _, _, by_max_z = cadre_z
+    lignes_tri = sorted(ens_a_tmp - {by_max_z - 1})
+    map_a = {}
+    for idx_l, yc in enumerate(lignes_tri):
+        if exploration > 0.0 and random.random() < exploration:
+            map_a[str(yc)] = random.choice(paire_sel)
+        elif yc >= 20 and "graphite" in paire_sel:
+            map_a[str(yc)] = "graphite"
+        else:
+            map_a[str(yc)] = paire_sel[idx_l % len(paire_sel)]
+
+    return {"ammo_pair": paire_sel, "pas_travees": pas_sel, "gene_taille": tail_sel, "gene_ammo": map_a}
+
+
+def _apprendre_politique_neuronale(etat_cerveau: dict, larg_g: int, haut_g: int,
+                                   ens_mat: set, ens_cap: set, gen_gagnant: dict,
+                                   gain_relatif: float):
+    if not gen_gagnant or gain_relatif <= 0:
+        return
+    pol = etat_cerveau.setdefault("neural_policy", {})
+    vec_x = _extraire_vecteur_contexte(larg_g, haut_g, ens_mat, ens_cap)
+    lr = min(0.1, max(0.01, gain_relatif / 10000.0))
+
+    cle_pas = str(gen_gagnant.get("pas_travees", 0))
+    w_pas = pol.setdefault("pas_weights", {"0": [0.6, 0.5, 0.4], "4": [0.2, 0.3, 0.1], "5": [0.1, 0.2, 0.3]})
+    if cle_pas in w_pas:
+        w_pas[cle_pas] = [round(max(-2.0, min(2.0, w + lr * x)), 5) for w, x in zip(w_pas[cle_pas], vec_x)]
+
+    cle_t = str(gen_gagnant.get("gene_taille", 0))
+    w_tail = pol.setdefault("taille_weights", {"0": [0.4, 0.2, 0.3], "1": [0.5, 0.4, 0.5]})
+    if cle_t in w_tail:
+        w_tail[cle_t] = [round(max(-2.0, min(2.0, w + lr * x)), 5) for w, x in zip(w_tail[cle_t], vec_x)]
+
+    paire_g = gen_gagnant.get("ammo_pair", [])
+    if paire_g:
+        cle_prof = "deep" if haut_g >= 30 else ("mid" if haut_g >= 18 else "small")
+        cle_syn = f"{cle_prof}:{'+'.join(sorted(paire_g))}"
+        syn_map = pol.setdefault("ammo_synergy", {})
+        anc_v = float(syn_map.get(cle_syn, 0.0))
+        syn_map[cle_syn] = round(anc_v + min(30.0, gain_relatif * 0.05), 2)
+
+
+_CACHE_EVAL = {}
+
+
+def _evaluer_complexe_complet(larg_g: int, haut_g: int, sans_mur: bool, lim_cible_y: int,
+                              cadre_z: Tuple[int, int, int, int], ens_mat: set, ens_cap: set,
+                              ens_ammo: set, quota_aa: float, cat_tourelles: list,
+                              cat_soin: list, cat_log: list, cat_liq: list,
+                              cat_en: list, cat_murs: list, genome_cand: dict):
+    sig_cache = (larg_g, haut_g, tuple(sorted(ens_ammo)), json.dumps(genome_cand, sort_keys=True))
+    if sig_cache in _CACHE_EVAL:
+        return _CACHE_EVAL[sig_cache]
+
+    plan_cand = Grille(larg_g, haut_g)
+    mode_liq = "liquids" in ens_cap
+    pas_f = int(genome_cand.get("pas_travees", 0)) if genome_cand else 0
+
+    placer_soin_minimal_avant(plan_cand, cat_soin, cadre_z, larg_g, haut_g, sans_mur, mode_liq)
+    plan_cand, t_posees, t_top2, duo_ammo, _ = phase3_optimisation_dps(
+        plan_cand, cat_tourelles, cat_soin, cadre_z, larg_g, haut_g,
+        lim_cible_y, ens_cap, ens_ammo, quota_aa, genome_cand
+    )
+    reg_infra, conv_opt = phase4_infrastructure(
+        plan_cand, t_posees, t_top2, cat_soin, cat_log, cat_liq, cat_en,
+        cadre_z, larg_g, haut_g, lim_cible_y, sans_mur, ens_cap, duo_ammo, quota_aa, pas_f
+    )
+    dps_brut_tot, ratio_flux, _ = phase6_logistique_finale(
+        plan_cand, t_posees, reg_infra, conv_opt, larg_g, haut_g
+    )
+    phase7_protection_compaction(plan_cand, cat_murs, cadre_z, larg_g, haut_g, sans_mur, ens_mat, ens_cap)
+
+    vus_u = set()
+    ods_poses = []
+    nb_bat_1x1 = 0
+    cases_vides_int = 0
+    nb_presages = 0
+    ix_g, ix_d, iy_h, iy_b = _zone_interieure_tourelles(cadre_z, larg_g, haut_g, mode_liq)
+
+    for py in range(iy_h, iy_b):
+        for px in range(ix_g, ix_d):
+            occ = plan_cand.cellules[py][px]
+            if occ is None:
+                cases_vides_int += 1
+            elif id(occ) not in vus_u:
+                vus_u.add(id(occ))
+                if occ.type == "soin" and occ.kind == "overdrive":
+                    ods_poses.append(occ)
+                elif occ.kind == "battery" and occ.taille() == 1:
+                    nb_bat_1x1 += 1
+                elif occ.id == "foreshadow":
+                    nb_presages += 1
+
+    dps_effectif = 0.0
+    for t_cur in t_posees:
+        if not peut_couvrir_cible(t_cur, t_cur.x, t_cur.y, lim_cible_y):
+            continue
+        mult_od = 1.0
+        tx_c, ty_c = t_cur.x + t_cur.largeur / 2.0, t_cur.y + t_cur.hauteur / 2.0
+        for od in ods_poses:
+            if math.hypot((od.x + od.largeur / 2.0) - tx_c, (od.y + od.hauteur / 2.0) - ty_c) <= od.portee:
+                if od.speed_boost > mult_od:
+                    mult_od = od.speed_boost
+        dps_effectif += t_cur.dps_reel * mult_od
+
+    tot_t = max(1, len(t_posees))
+    pct_presages = nb_presages / tot_t
+    bonus_pres = 3000.0 if (0.03 <= pct_presages <= 0.04 or nb_presages in (2, 3)) else -2500.0 * abs(pct_presages - 0.035)
+
+    fit_global = (dps_effectif * ratio_flux) - (nb_bat_1x1 * 25.0) - (cases_vides_int * 120.0) + bonus_pres
+    res_eval = (fit_global, dps_brut_tot, plan_cand, t_posees, duo_ammo)
+    _CACHE_EVAL[sig_cache] = res_eval
+    return res_eval
+
+
+def _tirer_scenario_universel():
+    paliers_mat = (
+        {"copper", "lead", "graphite", "silicon", "titanium"},
+        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium"},
+        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium", "plastanium"},
+        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium", "surge-alloy"},
+        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium", "plastanium", "surge-alloy"},
+    )
+    paliers_cap = ({"energy"}, {"energy", "liquids"}, {"energy", "liquids"})
+    w_rnd = random.randrange(16, 48, 2)
+    h_rnd = random.randrange(16, 46, 2)
+    mat_rnd = set(random.choice(paliers_mat))
+    cap_rnd = set(random.choice(paliers_cap))
+    am_rnd = {m for m in mat_rnd if m in ("copper", "lead", "graphite", "silicon", "thorium", "plastanium", "surge-alloy", "metaglass")}
+    return w_rnd, h_rnd, mat_rnd, cap_rnd, am_rnd
+
+
+def meil_fit_maj(cerveau: dict, cle: str, fit_act: float) -> bool:
+    ancien = cerveau.get("hall_of_fame", {}).get(cle, {}).get("best_fitness", -1e9)
+    return fit_act > ancien
+
+
+def main():
+    analyseur = argparse.ArgumentParser()
+    analyseur.add_argument("largeur", type=int)
+    analyseur.add_argument("hauteur", type=int)
+    analyseur.add_argument("ressources", nargs="+")
+    analyseur.add_argument("--data", default=None)
+    analyseur.add_argument("--no-wall", action="store_true")
+    analyseur.add_argument("--duree", type=float, default=30.0)
+    analyseur.add_argument("--anti-air", type=float, default=15.0)
+    analyseur.add_argument("--out", default=".")
+    analyseur.add_argument("--ammo", nargs="*", default=[])
+    analyseur.add_argument("--train", action="store_true")
+    analyseur.add_argument("--brain", default=None)
+    args_cli = analyseur.parse_args()
+
+    larg_g, haut_g, liste_res = args_cli.largeur, args_cli.hauteur, args_cli.ressources
+    ens_ammo = set(args_cli.ammo) if args_cli.ammo else set()
+    chemin_json = liste_res.pop() if (liste_res and liste_res[-1].lower().endswith(".json")) else args_cli.data
+    quota_aa = max(0.0, min(100.0, args_cli.anti_air)) / 100.0
+    rep_script = os.path.dirname(os.path.abspath(__file__))
+    chemin_cerveau = args_cli.brain or os.path.join(rep_script, "mindustry_brain.json")
+
+    ens_mat, ens_cap = phase0_validation(larg_g, haut_g, liste_res, chemin_json)
+    cat_t, cat_log, cat_liq, cat_murs, cat_en, cat_soin = phase1_chargement(chemin_json, ens_mat, ens_cap, ens_ammo)
+    cadre_z, _, _ = calculer_zone_tourelles(larg_g, haut_g, args_cli.no_wall)
+    lim_cible_y = -8
+
+    etat_cerveau = _charger_cerveau(chemin_cerveau)
+    cle_sig = _cle_signature_cerveau(larg_g, haut_g, ens_mat, ens_cap, ens_ammo, args_cli.no_wall, quota_aa)
+    entree_hof = etat_cerveau["hall_of_fame"].get(cle_sig, {})
+    meilleur_gen = entree_hof.get("best_genome") or _predire_genome_neuronal(
+        etat_cerveau, larg_g, haut_g, cadre_z, ens_mat, ens_cap, ens_ammo, cat_t, 0.0
+    )
+
+    meilleur_fit, meilleur_dps, meilleur_plan, meilleures_t, meilleur_duo = _evaluer_complexe_complet(
+        larg_g, haut_g, args_cli.no_wall, lim_cible_y, cadre_z, ens_mat, ens_cap,
+        ens_ammo, quota_aa, cat_t, cat_soin, cat_log, cat_liq, cat_en, cat_murs, meilleur_gen
+    )
+
+    if args_cli.train:
+        print(f"[TRAIN MULTI-PROC] Cible: {cle_sig} | Fit initial: {meilleur_fit:.0f} (Ctrl+C pour sauvegarder)")
+        nb_workers = max(1, (os.cpu_count() or 4) - 1)
+        try:
+            with ProcessPoolExecutor(max_workers=nb_workers) as executor:
+                ep_loc = 0
+                while True:
+                    ep_loc += 1
+                    etat_cerveau["total_episodes"] = int(etat_cerveau.get("total_episodes", 0)) + nb_workers
+                    futurs = []
+                    for _ in range(nb_workers):
+                        is_odd = (random.random() < 0.5)
+                        if is_odd:
+                            g_t = _predire_genome_neuronal(etat_cerveau, larg_g, haut_g, cadre_z, ens_mat, ens_cap, ens_ammo, cat_t, 0.35)
+                            futurs.append(executor.submit(_evaluer_complexe_complet, larg_g, haut_g, args_cli.no_wall, lim_cible_y, cadre_z, ens_mat, ens_cap, ens_ammo, quota_aa, cat_t, cat_soin, cat_log, cat_liq, cat_en, cat_murs, g_t))
+                        else:
+                            w_u, h_u, m_u, c_u, a_u = _tirer_scenario_universel()
+                            ct_u, cl_u, clq_u, cm_u, ce_u, cs_u = phase1_chargement(chemin_json, m_u, c_u, a_u)
+                            if ct_u:
+                                cz_u, _, _ = calculer_zone_tourelles(w_u, h_u, False)
+                                g_u = _predire_genome_neuronal(etat_cerveau, w_u, h_u, cz_u, m_u, c_u, a_u, ct_u, 0.4)
+                                futurs.append(executor.submit(_evaluer_complexe_complet, w_u, h_u, False, lim_cible_y, cz_u, m_u, c_u, a_u, 0.15, ct_u, cs_u, cl_u, clq_u, ce_u, cm_u, g_u))
+
+                    for fut in as_completed(futurs):
+                        try:
+                            fit_c, dps_c, plan_c, t_c, duo_c = fut.result()
+                            if fit_c > meilleur_fit:
+                                gain = fit_c - meilleur_fit
+                                meilleur_fit, meilleur_dps, meilleur_plan, meilleures_t, meilleur_duo = fit_c, dps_c, plan_c, t_c, duo_c
+                                _apprendre_politique_neuronale(etat_cerveau, larg_g, haut_g, ens_mat, ens_cap, meilleur_gen, gain)
+                                etat_cerveau["hall_of_fame"][cle_sig] = {"best_fitness": meilleur_fit, "best_dps": meilleur_dps, "best_genome": meilleur_gen}
+                                _sauvegarder_cerveau_atomique(chemin_cerveau, etat_cerveau)
+                                phase8_generer_fichiers(meilleur_plan, args_cli.out)
+                                print(f"[RECORD Ep {ep_loc}] Fit: {meilleur_fit:.0f} | DPS: {meilleur_dps:.0f} | Tourelles: {len(meilleures_t)}")
+                        except Exception:
+                            pass
+        except KeyboardInterrupt:
+            print("\n[STOP] Interruption Ctrl+C : sauvegarde atomique du cerveau...")
+
+    if meil_fit_maj(etat_cerveau, cle_sig, meilleur_fit):
+        etat_cerveau["hall_of_fame"][cle_sig] = {"best_fitness": meilleur_fit, "best_dps": meilleur_dps, "best_genome": meilleur_gen or {}}
+    _sauvegarder_cerveau_atomique(chemin_cerveau, etat_cerveau)
+
+    phase8_generer_fichiers(meilleur_plan, args_cli.out)
+    nb_aa = sum(1 for t in meilleures_t if t.targets_air)
+    pct_aa = (100.0 * nb_aa / max(1, len(meilleures_t)))
+    print(f"\n[OK V12.0] Tourelles: {len(meilleures_t)} | Anti-Air: {pct_aa:.0f}% | Top2 Ammo: {meilleur_duo} | DPS: {meilleur_dps:.0f}")
+    
 def calculer_besoin_munitions(liste_posees: list) -> float:
     return sum(max(0.2, min(t.rate, 3.0) * 0.4) for t in liste_posees if t.best_ammo != "power")
 
@@ -1632,10 +1886,42 @@ def phase7_protection_compaction(plan_g: Grille, liste_murs: list,
                     (px + larg_m <= bx_min) or (px >= bx_max)
                 )
                 if en_bordure and plan_g.peut_placer(pr_mur, px, py):
-                    inst_m = deepcopy(pr_mur)
+                    inst_m = pr_mur.cloner(x=px, y=py)
                     plan_g.placer(inst_m, px, py)
                     murs_poses.append(inst_m)
     return murs_poses
+
+
+def _resoudre_nom_item_msch(cfg_brut: str) -> str:
+    if not cfg_brut:
+        return ""
+    table_alias = {
+        "surge-alloy": ("surge_alloy", "surge", "surge-alloy", "surgealloy", "SurgeAlloy"),
+        "phase-fabric": ("phase_fabric", "phase", "phase-fabric", "phasefabric", "PhaseFabric"),
+        "blast-compound": ("blast_compound", "blast", "blast-compound", "blastcompound"),
+        "spore-pod": ("spore_pod", "spore", "spore-pod", "sporepod"),
+    }
+    if cfg_brut not in table_alias:
+        return cfg_brut
+    variantes = table_alias.get(cfg_brut)
+    rep_app = os.environ.get("APPDATA", "")
+    rep_build = os.path.join(rep_app, "npm", "node_modules", "msch-generate", "build")
+    if os.path.isdir(rep_build):
+        code_js = ""
+        for nom_f in os.listdir(rep_build):
+            if nom_f.endswith(".js"):
+                try:
+                    with open(os.path.join(rep_build, nom_f), "r", encoding="utf-8", errors="ignore") as flux_j:
+                        code_js += flux_j.read() + "\n"
+                except OSError:
+                    pass
+        for var_c in variantes:
+            if f'"{var_c}"' in code_js or f"'{var_c}'" in code_js or f"{var_c}:" in code_js:
+                return var_c
+        for repli in ("thorium", "plastanium", "titanium", "silicon", "graphite", "copper"):
+            if f'"{repli}"' in code_js or f"'{repli}'" in code_js or f"{repli}:" in code_js:
+                return repli
+    return next(iter(variantes))
 
 
 def phase8_generer_fichiers(plan_g: Grille, rep_sortie: str = "."):
@@ -1709,300 +1995,5 @@ def phase8_generer_fichiers(plan_g: Grille, rep_sortie: str = "."):
 
     return dict_legende, texte_schema
 
-def _cle_signature_cerveau(larg_g: int, haut_g: int, ens_mat: set, ens_cap: set,
-                           ens_ammo: set, sans_mur: bool, quota_aa: float) -> str:
-    str_mat = ",".join(sorted(ens_mat | ens_cap))
-    str_am = ",".join(sorted(ens_ammo)) if ens_ammo else "all"
-    str_m = "nowall" if sans_mur else "wall"
-    return f"{larg_g}x{haut_g}|{str_mat}|{str_am}|{str_m}|aa{int(round(quota_aa * 100))}"
-
-
-def _charger_cerveau(chemin_cerveau: str) -> dict:
-    defaut_c = {
-        "version": "11.5-universal",
-        "total_episodes": 0,
-        "universal_episodes": 0,
-        "neural_policy": {
-            "pas_weights": {"0": [0.2, 0.0, 0.0], "4": [0.1, 0.5, -0.2], "5": [0.1, -0.2, 0.5]},
-            "taille_weights": {"0": [0.1, -0.3, 0.2], "1": [0.2, 0.4, -0.1]},
-            "ammo_synergy": {},
-            "depth_rules": {"deep_graphite_bonus": 1.0, "heavy_thorium_bonus": 1.0},
-        },
-        "hall_of_fame": {},
-    }
-    if not os.path.isfile(chemin_cerveau):
-        return defaut_c
-    try:
-        with open(chemin_cerveau, "r", encoding="utf-8") as f_in:
-            lu = json.load(f_in)
-            if isinstance(lu, dict) and "hall_of_fame" in lu:
-                for cle_d, val_d in defaut_c.items():
-                    lu.setdefault(cle_d, val_d)
-                return lu
-    except (OSError, ValueError):
-        pass
-    return defaut_c
-
-
-def _sauvegarder_cerveau_atomique(chemin_cerveau: str, etat_cerveau: dict):
-    chemin_tmp = chemin_cerveau + ".tmp"
-    try:
-        with open(chemin_tmp, "w", encoding="utf-8") as f_tmp:
-            json.dump(etat_cerveau, f_tmp, ensure_ascii=False, indent=2)
-            f_tmp.flush()
-            os.fsync(f_tmp.fileno())
-        os.replace(chemin_tmp, chemin_cerveau)
-    except OSError:
-        pass
-
-
-def _extraire_vecteur_contexte(larg_g: int, haut_g: int, ens_mat: set, ens_cap: set) -> List[float]:
-    v_prof = min(1.0, haut_g / 45.0)
-    v_surf = min(1.0, (larg_g * haut_g) / 2500.0)
-    v_tech = 1.0 if ("surge-alloy" in ens_mat or "thorium" in ens_mat) else 0.3
-    return [1.0, v_prof, v_surf * v_tech]
-
-
-def _predire_genome_neuronal(etat_cerveau: dict, larg_g: int, haut_g: int,
-                             cadre_z: Tuple[int, int, int, int], ens_mat: set,
-                             ens_cap: set, ens_ammo: set, cat_t: list,
-                             exploration: float = 0.0) -> dict:
-    pol = etat_cerveau.get("neural_policy", {})
-    vec_x = _extraire_vecteur_contexte(larg_g, haut_g, ens_mat, ens_cap)
-    mun_dispo = sorted({
-        am for t in cat_t for am in (t.ammo_dps or {}).keys()
-        if am != "power" and (not ens_ammo or am in ens_ammo)
-    })
-    paires_m = list(combinations(mun_dispo, 2)) if len(mun_dispo) >= 2 else [(next(iter(mun_dispo), "copper"),)]
-    syn_map = pol.get("ammo_synergy", {})
-    cle_prof = "deep" if haut_g >= 30 else ("mid" if haut_g >= 18 else "small")
-
-    if random.random() < exploration:
-        paire_sel = list(random.choice(paires_m))
-        pas_sel = random.choice([0, 4, 5])
-        tail_sel = random.choice([0, 1])
-    else:
-        def score_paire(p_cand):
-            cle_p = f"{cle_prof}:{'+'.join(sorted(p_cand))}"
-            bonus_h = 250.0 if (haut_g > 28 and "graphite" in p_cand) else 0.0
-            return float(syn_map.get(cle_p, 0.0)) + bonus_h
-
-        paire_sel = list(max(paires_m, key=score_paire))
-        w_pas = pol.get("pas_weights", {"0": [0.2, 0.0, 0.0], "4": [0.1, 0.5, -0.2], "5": [0.1, -0.2, 0.5]})
-        pas_sel = int(max(["0", "4", "5"], key=lambda k: sum(w * x for w, x in zip(w_pas.get(k, [0, 0, 0]), vec_x))))
-        w_tail = pol.get("taille_weights", {"0": [0.1, -0.3, 0.2], "1": [0.2, 0.4, -0.1]})
-        tail_sel = int(max(["0", "1"], key=lambda k: sum(w * x for w, x in zip(w_tail.get(k, [0, 0, 0]), vec_x))))
-
-    ens_a_tmp, _ = _lignes_couloirs_internes(cadre_z, larg_g, haut_g, "liquids" in ens_cap, pas_sel)
-    _, _, _, by_max_z = cadre_z
-    lignes_tri = sorted(ens_a_tmp - {by_max_z - 1})
-    map_a = {}
-    for idx_l, yc in enumerate(lignes_tri):
-        if exploration > 0.0 and random.random() < exploration:
-            map_a[str(yc)] = random.choice(paire_sel)
-        elif yc >= 20 and "graphite" in paire_sel:
-            map_a[str(yc)] = "graphite"
-        else:
-            map_a[str(yc)] = paire_sel[idx_l % len(paire_sel)]
-
-    return {"ammo_pair": paire_sel, "pas_travees": pas_sel, "gene_taille": tail_sel, "gene_ammo": map_a}
-
-
-def _apprendre_politique_neuronale(etat_cerveau: dict, larg_g: int, haut_g: int,
-                                   ens_mat: set, ens_cap: set, gen_gagnant: dict,
-                                   gain_relatif: float):
-    if not gen_gagnant or gain_relatif <= 0:
-        return
-    pol = etat_cerveau.setdefault("neural_policy", {})
-    vec_x = _extraire_vecteur_contexte(larg_g, haut_g, ens_mat, ens_cap)
-    lr = min(0.15, max(0.01, gain_relatif / 5000.0))
-
-    cle_pas = str(gen_gagnant.get("pas_travees", 0))
-    w_pas = pol.setdefault("pas_weights", {"0": [0.2, 0.0, 0.0], "4": [0.1, 0.5, -0.2], "5": [0.1, -0.2, 0.5]})
-    if cle_pas in w_pas:
-        w_pas[cle_pas] = [round(w + lr * x, 5) for w, x in zip(w_pas[cle_pas], vec_x)]
-
-    cle_t = str(gen_gagnant.get("gene_taille", 0))
-    w_tail = pol.setdefault("taille_weights", {"0": [0.1, -0.3, 0.2], "1": [0.2, 0.4, -0.1]})
-    if cle_t in w_tail:
-        w_tail[cle_t] = [round(w + lr * x, 5) for w, x in zip(w_tail[cle_t], vec_x)]
-
-    paire_g = gen_gagnant.get("ammo_pair", [])
-    if paire_g:
-        cle_prof = "deep" if haut_g >= 30 else ("mid" if haut_g >= 18 else "small")
-        cle_syn = f"{cle_prof}:{'+'.join(sorted(paire_g))}"
-        syn_map = pol.setdefault("ammo_synergy", {})
-        anc_v = float(syn_map.get(cle_syn, 0.0))
-        syn_map[cle_syn] = round(anc_v + min(50.0, gain_relatif * 0.1), 2)
-
-def _evaluer_complexe_complet(larg_g: int, haut_g: int, sans_mur: bool, lim_cible_y: int,
-                              cadre_z: Tuple[int, int, int, int], ens_mat: set, ens_cap: set,
-                              ens_ammo: set, quota_aa: float, cat_tourelles: list,
-                              cat_soin: list, cat_log: list, cat_liq: list,
-                              cat_en: list, cat_murs: list, genome_cand: dict):
-    plan_cand = Grille(larg_g, haut_g)
-    mode_liq = "liquids" in ens_cap
-    pas_f = int(genome_cand.get("pas_travees", 0)) if genome_cand else 0
-
-    placer_soin_minimal_avant(plan_cand, cat_soin, cadre_z, larg_g, haut_g, sans_mur, mode_liq)
-    plan_cand, t_posees, t_top2, duo_ammo, _ = phase3_optimisation_dps(
-        plan_cand, cat_tourelles, cat_soin, cadre_z, larg_g, haut_g,
-        lim_cible_y, ens_cap, ens_ammo, quota_aa, genome_cand
-    )
-    reg_infra, conv_opt = phase4_infrastructure(
-        plan_cand, t_posees, t_top2, cat_soin, cat_log, cat_liq, cat_en,
-        cadre_z, larg_g, haut_g, lim_cible_y, sans_mur, ens_cap, duo_ammo, quota_aa, pas_f
-    )
-    dps_brut_tot, ratio_flux, _ = phase6_logistique_finale(
-        plan_cand, t_posees, reg_infra, conv_opt, larg_g, haut_g
-    )
-    phase7_protection_compaction(plan_cand, cat_murs, cadre_z, larg_g, haut_g, sans_mur, ens_mat, ens_cap)
-
-    vus_u = set()
-    ods_poses = []
-    nb_bat_1x1 = 0
-    for py in range(haut_g):
-        for px in range(larg_g):
-            occ = plan_cand.cellules[py][px]
-            if occ is not None and id(occ) not in vus_u:
-                vus_u.add(id(occ))
-                if occ.type == "soin" and occ.kind == "overdrive":
-                    ods_poses.append(occ)
-                elif occ.kind == "battery" and occ.taille() == 1:
-                    nb_bat_1x1 += 1
-
-    dps_effectif = 0.0
-    for t_cur in t_posees:
-        if not peut_couvrir_cible(t_cur, t_cur.x, t_cur.y, lim_cible_y):
-            continue
-        mult_od = 1.0
-        tx_c, ty_c = t_cur.x + t_cur.largeur / 2.0, t_cur.y + t_cur.hauteur / 2.0
-        for od in ods_poses:
-            if math.hypot((od.x + od.largeur / 2.0) - tx_c, (od.y + od.hauteur / 2.0) - ty_c) <= od.portee:
-                if od.speed_boost > mult_od:
-                    mult_od = od.speed_boost
-        dps_effectif += t_cur.dps_reel * mult_od
-
-    fit_global = (dps_effectif * ratio_flux) - (nb_bat_1x1 * 25.0)
-    return fit_global, dps_brut_tot, plan_cand, t_posees, duo_ammo
-
-
-def _tirer_scenario_universel():
-    paliers_mat = (
-        {"copper", "lead", "graphite", "silicon", "titanium"},
-        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium"},
-        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium", "plastanium"},
-        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium", "surge-alloy"},
-        {"copper", "lead", "graphite", "silicon", "titanium", "metaglass", "thorium", "plastanium", "surge-alloy"},
-    )
-    paliers_cap = ({"energy"}, {"energy", "liquids"}, {"energy", "liquids"})
-    w_rnd = random.randrange(16, 48, 2)
-    h_rnd = random.randrange(16, 46, 2)
-    mat_rnd = set(random.choice(paliers_mat))
-    cap_rnd = set(random.choice(paliers_cap))
-    am_rnd = {m for m in mat_rnd if m in ("copper", "lead", "graphite", "silicon", "thorium", "plastanium", "surge-alloy", "metaglass")}
-    return w_rnd, h_rnd, mat_rnd, cap_rnd, am_rnd
-
-
-def meil_fit_maj(cerveau: dict, cle: str, fit_act: float) -> bool:
-    ancien = cerveau.get("hall_of_fame", {}).get(cle, {}).get("best_fitness", -1e9)
-    return fit_act > ancien
-
-
-def main():
-    analyseur = argparse.ArgumentParser()
-    analyseur.add_argument("largeur", type=int)
-    analyseur.add_argument("hauteur", type=int)
-    analyseur.add_argument("ressources", nargs="+")
-    analyseur.add_argument("--data", default=None)
-    analyseur.add_argument("--no-wall", action="store_true")
-    analyseur.add_argument("--duree", type=float, default=30.0)
-    analyseur.add_argument("--anti-air", type=float, default=15.0)
-    analyseur.add_argument("--out", default=".")
-    analyseur.add_argument("--ammo", nargs="*", default=[])
-    analyseur.add_argument("--train", action="store_true")
-    analyseur.add_argument("--brain", default=None)
-    args_cli = analyseur.parse_args()
-
-    larg_g, haut_g, liste_res = args_cli.largeur, args_cli.hauteur, args_cli.ressources
-    ens_ammo = set(args_cli.ammo) if args_cli.ammo else set()
-    chemin_json = liste_res.pop() if (liste_res and liste_res[-1].lower().endswith(".json")) else args_cli.data
-    quota_aa = max(0.0, min(100.0, args_cli.anti_air)) / 100.0
-    rep_script = os.path.dirname(os.path.abspath(__file__))
-    chemin_cerveau = args_cli.brain or os.path.join(rep_script, "mindustry_brain.json")
-
-    ens_mat, ens_cap = phase0_validation(larg_g, haut_g, liste_res, chemin_json)
-    cat_t, cat_log, cat_liq, cat_murs, cat_en, cat_soin = phase1_chargement(chemin_json, ens_mat, ens_cap, ens_ammo)
-    phase2_ciblage(cat_t, larg_g, haut_g)
-    cadre_z, _, _ = calculer_zone_tourelles(larg_g, haut_g, args_cli.no_wall)
-    lim_cible_y = -8
-
-    etat_cerveau = _charger_cerveau(chemin_cerveau)
-    cle_sig = _cle_signature_cerveau(larg_g, haut_g, ens_mat, ens_cap, ens_ammo, args_cli.no_wall, quota_aa)
-    entree_hof = etat_cerveau["hall_of_fame"].get(cle_sig, {})
-    meilleur_gen = entree_hof.get("best_genome") or _predire_genome_neuronal(
-        etat_cerveau, larg_g, haut_g, cadre_z, ens_mat, ens_cap, ens_ammo, cat_t, 0.0
-    )
-
-    meilleur_fit, meilleur_dps, meilleur_plan, meilleures_t, meilleur_duo = _evaluer_complexe_complet(
-        larg_g, haut_g, args_cli.no_wall, lim_cible_y, cadre_z, ens_mat, ens_cap,
-        ens_ammo, quota_aa, cat_t, cat_soin, cat_log, cat_liq, cat_en, cat_murs, meilleur_gen
-    )
-
-    if args_cli.train:
-        print(f"[TRAIN UNIVERSEL] Cible: {cle_sig} | Fit initial: {meilleur_fit:.0f} (Ctrl+C pour sauvegarder)")
-        try:
-            ep_loc = 0
-            while True:
-                ep_loc += 1
-                etat_cerveau["total_episodes"] = int(etat_cerveau.get("total_episodes", 0)) + 1
-                if ep_loc % 2 == 1:
-                    gen_test = _predire_genome_neuronal(
-                        etat_cerveau, larg_g, haut_g, cadre_z, ens_mat, ens_cap, ens_ammo, cat_t, 0.45
-                    )
-                    fit_c, dps_c, plan_c, t_c, duo_c = _evaluer_complexe_complet(
-                        larg_g, haut_g, args_cli.no_wall, lim_cible_y, cadre_z, ens_mat, ens_cap,
-                        ens_ammo, quota_aa, cat_t, cat_soin, cat_log, cat_liq, cat_en, cat_murs, gen_test
-                    )
-                    if fit_c > meilleur_fit:
-                        gain = fit_c - meilleur_fit
-                        meilleur_fit, meilleur_dps, meilleur_plan, meilleures_t, meilleur_duo = fit_c, dps_c, plan_c, t_c, duo_c
-                        meilleur_gen = gen_test
-                        _apprendre_politique_neuronale(etat_cerveau, larg_g, haut_g, ens_mat, ens_cap, gen_test, gain)
-                        etat_cerveau["hall_of_fame"][cle_sig] = {"best_fitness": meilleur_fit, "best_dps": meilleur_dps, "best_genome": meilleur_gen}
-                        _sauvegarder_cerveau_atomique(chemin_cerveau, etat_cerveau)
-                        phase8_generer_fichiers(meilleur_plan, args_cli.out)
-                        print(f"[RECORD CIBLE Ep {ep_loc}] Fit: {meilleur_fit:.0f} | DPS: {meilleur_dps:.0f} | Tourelles: {len(meilleures_t)} | Ammo: {meilleur_duo}")
-                else:
-                    etat_cerveau["universal_episodes"] = int(etat_cerveau.get("universal_episodes", 0)) + 1
-                    w_u, h_u, m_u, c_u, a_u = _tirer_scenario_universel()
-                    ct_u, cl_u, clq_u, cm_u, ce_u, cs_u = phase1_chargement(chemin_json, m_u, c_u, a_u)
-                    if not ct_u:
-                        continue
-                    cz_u, _, _ = calculer_zone_tourelles(w_u, h_u, False)
-                    sig_u = _cle_signature_cerveau(w_u, h_u, m_u, c_u, a_u, False, 0.15)
-                    gen_u = _predire_genome_neuronal(etat_cerveau, w_u, h_u, cz_u, m_u, c_u, a_u, ct_u, 0.5)
-                    fit_u, dps_u, _, _, _ = _evaluer_complexe_complet(
-                        w_u, h_u, False, lim_cible_y, cz_u, m_u, c_u, a_u, 0.15, ct_u, cs_u, cl_u, clq_u, ce_u, cm_u, gen_u
-                    )
-                    anc_u = etat_cerveau["hall_of_fame"].get(sig_u, {}).get("best_fitness", 0.0)
-                    if fit_u > anc_u:
-                        _apprendre_politique_neuronale(etat_cerveau, w_u, h_u, m_u, c_u, gen_u, max(50.0, fit_u - anc_u))
-                        etat_cerveau["hall_of_fame"][sig_u] = {"best_fitness": fit_u, "best_dps": dps_u, "best_genome": gen_u}
-                        _sauvegarder_cerveau_atomique(chemin_cerveau, etat_cerveau)
-                        print(f"[UNIVERSEL Ep {ep_loc}] Appris {w_u}x{h_u} -> Fit: {fit_u:.0f} | DPS: {dps_u:.0f}")
-        except KeyboardInterrupt:
-            print("\n[STOP] Interruption Ctrl+C detectee : sauvegarde atomique du cerveau universel...")
-
-    if meil_fit_maj(etat_cerveau, cle_sig, meilleur_fit):
-        etat_cerveau["hall_of_fame"][cle_sig] = {"best_fitness": meilleur_fit, "best_dps": meilleur_dps, "best_genome": meilleur_gen or {}}
-    _sauvegarder_cerveau_atomique(chemin_cerveau, etat_cerveau)
-
-    phase8_generer_fichiers(meilleur_plan, args_cli.out)
-    nb_aa = sum(1 for t in meilleures_t if t.targets_air)
-    pct_aa = (100.0 * nb_aa / max(1, len(meilleures_t)))
-    print(f"\n[OK V11.5] Tourelles: {len(meilleures_t)} | Anti-Air: {pct_aa:.0f}% | Top2 Ammo: {meilleur_duo} | DPS: {meilleur_dps:.0f}")
-
 if __name__ == "__main__":
     main()
-    

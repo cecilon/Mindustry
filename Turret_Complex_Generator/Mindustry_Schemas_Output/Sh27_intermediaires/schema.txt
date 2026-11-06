@@ -1,0 +1,28 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*
+********************************************
+A*BCDDCECFDDDDDDDDDDDDDDDDDDDDCECFDDDDDDDDA*
+**BG*HIJK**L*M***M***M***M***HIJK**L*HG*NI**
+A*O**NIP********************* IP***** ** IA*
+**OL*L* ***L*****************L* ***L*L*  I**
+A*B****    ********************    ****  IA*
+**BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDQR**
+A*BL*L*L*L*L*L*L*L*L*S**NL*L*L*L*L*L*L*  IA*
+**O********************* **************N I**
+A*OT*T*T*T*T*T*T*T*T****NT*T*T*T*T*T*T*  IA*
+**B******************HHHH**************H I**
+A*BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDURA*
+**BG*M***V**W*XY*M***M***V**XM***Y*W*XXXNI**
+A*O*********** *************N********Y*  IA*
+**OY******** L*L************ ****L*L***  I**
+A*B******    ************    ********    IA*
+**BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDQR**
+A*BL*L*L*L*L*L*L*L*L*L*L*L*L*L*L*L*L* G* IA*
+**O********************************** ** I**
+A*OL*L*L*L*L*L*L*L*L*L*L*L*L*L*L*L*L*L*  IA*
+**B************************************  I**
+A*BCDDCECFDDDDDDDDDDDDDDDDDDDDCECFDDDDDDCZaa
+**B   IJK**                   IJK**     bRA*
+A*B   IP***                   IP***     cI**
+**baaaab***aaaaaaaaaaaaaaaaaaaab***aaaaaaIA*
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*OA*ddd**
+************************************O**dcddd

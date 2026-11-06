@@ -1,0 +1,38 @@
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*
+******************************************
+A*BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDA*
+**BE F*G*H*H*H*H*H*H*H*H*H*H*H*H*IG* F*J**
+A*K  ****************************E** **JA*
+**K    IIIIIIIIIIIIIIIIIIIIIIIIIIIII   J**
+A*BCDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDLMA*
+**B  G*N**N**IIN**N**N**N**N**N**N** G*J**
+A*KE ********O********************** **JA*
+**K    ***************************** E J**
+A*K   PQRRRRRRRRRRRRRRRRRRRRRRRRRRRRS  JA*
+**K  G*N**N**N**N**T**N**N**N**E N**SG*J**
+A*K  **************************O****S**JA*
+**K   U*****************************V  J**
+A*K  N**N**N**N**N**N**N**N**  E N**SG*JA*
+**K  ************************W*O****S**J**
+A*K  *******************************V  JA*
+**K   PRRRRRRRRRRRRRRQXQRRRRRRRRRRRRS  J**
+A*K  W*G*Y**Y**     EZ*Y**Y**Y**  G*V  JA*
+**K  **********O*Bab************  **V  J**
+A*B   Ucc********Bd**cc*********ccccV  JA*
+**B  DUDCDDDDDDDDCeCfDDDDDDDDDDDDDDDVDCM**
+A*B   U                             V  JA*
+**K   U                             V  J**
+A*K   PQRRRRRRRRRRRRRRRRRRRRRRRRRRRRS  JA*
+**K   U                             V  J**
+A*K   UY**Y**Y**Y**Y**Y**Y**Y**  Y**V  JA*
+**K   U************************E ***V  J**
+A*K   U************************  ***V  JA*
+**B  DUDCDDDDDDDDDDDDDDDDDDDDDDDDDDDVDLM**
+A*B   U              E    W*        V  JA*
+**K   U                   **     g**V  J**
+A*K   UO*                O*      ***S  hii
+**K   U**                **      ***j kMA*
+A*K   lmmmmmmmmmmmmmmmmmmmmmmmmnnnnnV oJ**
+**kiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiJA*
+A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*A*Kppppp**
+**********************************Kpjpoppp
